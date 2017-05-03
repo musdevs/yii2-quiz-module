@@ -1,0 +1,21 @@
+{
+    "name": "gypsyk/yii2-quiz-module",
+    "description": "not now",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","module","quiz"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Gypsyk",
+            "email": "gypsyk911@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "gypsyk\\quiz\\": ""
+        }
+    }
+}
