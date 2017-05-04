@@ -59,7 +59,7 @@ $inputChk_one = Html::checkbox('question_answers', false, ['data-control' => 'ch
         var input = $(elem).parents('tr').find('input[type="text"]');
         var other = $('input[data-control="chk_one"]').not(elem);
         
-        input.attr('name', 'right_one[]');
+        input.attr('name', 'right_one');
         input.parent('div').toggleClass('has-success');
 
         other.each(function() {

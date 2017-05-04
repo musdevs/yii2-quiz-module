@@ -38,6 +38,27 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
             [['question', 'answers', 'r_answers'], 'string'],
         ];
     }
+    
+    public static function getTestQuestions($test_id)
+    {
+        return static::findAll(['test_id' => $test_id]);
+    }
+    
+    public static function getShuffledQuestionArray($test_id)
+    {
+        $questionList = static::findAll(['test_id' => $test_id]);
+        shuffle($questionList);
+
+        //Make a normal question order to hide real ids
+        $i = 1;
+        $tempList = [];
+        foreach ($questionList as $question) {
+            $tempList[$i] = $question->getPrimaryKey();
+            $i++;
+        }
+        
+        return $tempList;
+    }
 
     /**
      * @return \yii\db\ActiveQuery
