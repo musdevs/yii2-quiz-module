@@ -3,11 +3,14 @@
 namespace gypsyk\quiz\controllers;
 
 use gypsyk\quiz\models\AR_QuizQuestion;
+use gypsyk\quiz\models\Question;
+use gypsyk\quiz\models\Quiz;
 use Yii;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use gypsyk\quiz\models\AR_QuizTest;
+use yii\web\NotAcceptableHttpException;
 
 /**
  * Default controller for the `quiz` module
@@ -31,10 +34,15 @@ class DefaultController extends Controller
         if(empty($session['currentTestId'])) {
             throw new BadRequestHttpException('Во время загрузки вопросов произошла ошибка. Попрубуйте зайти в тест заново');
         }
+
+        if(!empty($session['isResults']) && $session['isResults']) {
+            throw new NotAcceptableHttpException('Доступ к тесту невозможен после его завершения');
+        }
         
         $questionModel = AR_QuizQuestion::findOne($session['questionIds'][$question]);
 
         if(Yii::$app->request->isPost) {
+
             $_SESSION['answers'][$question] = Yii::$app->request->post('answer');
 
             if(Yii::$app->request->post('save_btn')) {
@@ -46,8 +54,6 @@ class DefaultController extends Controller
                 }
             }
         }
-
-        //var_dump($_SESSION);
 
         return $this->render('test', [
             'questionModel' => $questionModel,
@@ -71,6 +77,7 @@ class DefaultController extends Controller
         $session->remove('currentTestId');
         $session->remove('questionIds');
         $session->remove('answers');
+        $session->remove('isResults');
 
         $session['currentTestId'] = $test_id;
         $session['questionIds'] = AR_QuizQuestion::getShuffledQuestionArray($test_id);
@@ -95,17 +102,18 @@ class DefaultController extends Controller
     {
         Yii::$app->session->open();
         $session = Yii::$app->session;
+        $session['isResults'] = true;
 
         $questionList = AR_QuizQuestion::findAll(['test_id' => $session['currentTestId']]);
 
-        $maxPoints = count($questionList);
+        $quizModel = new Quiz($questionList, $session['questionIds']);
+        $quizModel->loadUserAnswers($_SESSION['answers']);
+        $quizModel->checkAnswers();
 
-        foreach ($questionList as $question) {
-            $qSessionId = array_search($question->getPrimaryKey(), $_SESSION['questionIds']);
-            if($question->type == 1) {
-                $_SESSION['answers'][$qSessionId] == Json::decode($question->r_answers);
-                var_dump(Json::decode($question->r_answers));
-            }
-        }
+        return $this->render('results', [
+            'quizModel' => $quizModel            
+        ]);
+
+
     }
 }

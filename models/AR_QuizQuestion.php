@@ -3,6 +3,7 @@
 namespace gypsyk\quiz\models;
 
 use Yii;
+use gypsyk\quiz\models\AR_QuizQuestionType;
 
 /**
  * This is the model class for table "quiz_question".
@@ -19,6 +20,10 @@ use Yii;
  */
 class AR_QuizQuestion extends \yii\db\ActiveRecord
 {
+    const TYPE_ONE = 'ONE';
+    const TYPE_MULTIPLE = 'MULTIPLE';
+    const TYPE_TEXT = 'TEXT';
+    
     /**
      * @inheritdoc
      */
@@ -43,7 +48,14 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
     {
         return static::findAll(['test_id' => $test_id]);
     }
-    
+
+    /**
+     * Перемешивает вопросы теста.
+     * Возвращает массив вида [1 => 43, 2 => 46, ... {counter} => {db_id}]
+     *
+     * @param $test_id
+     * @return array
+     */
     public static function getShuffledQuestionArray($test_id)
     {
         $questionList = static::findAll(['test_id' => $test_id]);
@@ -63,8 +75,8 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-//    public function getType0()
-//    {
-//        return $this->hasOne(QuizQuestionType::className(), ['id' => 'type']);
-//    }
+    public function getType_q()
+    {
+        return $this->hasOne(AR_QuizQuestionType::className(), ['id' => 'type']);
+    }
 }

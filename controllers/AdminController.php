@@ -85,8 +85,17 @@ class AdminController extends Controller
             }
 
             if(Yii::$app->request->post('question_type') == 3) {
-                $question->answers = null;
-                $question->r_answers = Json::encode(Yii::$app->request->post('custom'));
+//                $question->answers = null;
+//                $question->r_answers = Json::encode(Yii::$app->request->post('custom'));
+
+                //Prepare the right answer
+                $item['id'] = Yii::$app->security->generateRandomString(5);
+                $item['text'] = Yii::$app->request->post('custom');
+                $right[] = $item;
+                $rightId = $item['id'];
+
+                $question->answers = Json::encode($right);
+                $question->r_answers = Json::encode($rightId);
             }
 
             $question->test_id = $test_id;
