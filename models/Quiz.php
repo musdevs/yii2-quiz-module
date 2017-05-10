@@ -4,6 +4,10 @@ namespace gypsyk\quiz\models;
 
 use Yii;
 
+/**
+ * Class Quiz
+ * @package gypsyk\quiz\models
+ */
 class Quiz
 {
     public $questions;
@@ -63,7 +67,7 @@ class Quiz
         $wrongAnswersCount = 0;
 
         foreach ($this->questions as $question) {
-            if($question->isUserAnswerIsCorrect()) {
+            if(!$question->isUserAnswerIsCorrect()) {
                 $wrongAnswersCount++;
                 $points--;
             } else {

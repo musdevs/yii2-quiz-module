@@ -5,11 +5,14 @@ namespace gypsyk\quiz\models\questions;
 use Yii;
 use yii\helpers\Json;
 
+//TO DO: Create an abstract class for question with common methods
 class QuestionMultiple
 {
     public $variants;
     public $correctAnswers;
     public $userAnswers;
+    public $text;
+    public $userCorrect;
 
     private $renderClass = '\gypsyk\quiz\models\renders\qmultiple_render\QuestionMultipleRender';
     private $renderer;
@@ -17,7 +20,8 @@ class QuestionMultiple
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
         $jCorrectAnswers = Json::decode($ar_question->r_answers, false);
-        $this->correctAnswers = $jCorrectAnswers; 
+        $this->correctAnswers = $jCorrectAnswers;
+        $this->text = $ar_question->question;
 
         foreach (Json::decode($ar_question->answers, false) as $jVariant) {
             $isCorrect = in_array($jVariant->id, $jCorrectAnswers) ? true : false;
@@ -49,9 +53,15 @@ class QuestionMultiple
      */
     public function isUserAnswerIsCorrect()
     {
-        if($this->correctAnswers == $this->userAnswers)
-            return true;
+        if(!empty($this->userCorrect))
+            return $this->userCorrect;
 
+        if($this->correctAnswers == $this->userAnswers) {
+            $this->userCorrect = true;
+            return true;
+        }
+
+        $this->userCorrect = false;
         return false;
     }
 
@@ -64,7 +74,7 @@ class QuestionMultiple
     public function getRender()
     {
         if(empty($this->renderer)) {
-            $this->renderer = Yii::createObject($this->renderClass);
+            $this->renderer = Yii::createObject($this->renderClass, [$this]);
         }
 
         return $this->renderer;

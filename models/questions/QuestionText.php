@@ -9,6 +9,8 @@ class QuestionText
 {
     public $correctAnswer;
     public $userAnswer;
+    public $text;
+    public $userCorrect;
 
     private $renderClass = '\gypsyk\quiz\models\renders\qtext_render\QuestionTextRender';
     private $renderer;
@@ -17,6 +19,7 @@ class QuestionText
     {
         $jCorrectAnswers = Json::decode($ar_question->answers, false)[0];
         $this->correctAnswer = $jCorrectAnswers->text;
+        $this->text = $ar_question->question;
     }
 
     /**
@@ -36,9 +39,15 @@ class QuestionText
      */
     public function isUserAnswerIsCorrect()
     {
-        if(trim(mb_strtolower($this->correctAnswer)) == trim(mb_strtolower($this->userAnswer)))
+        if(!empty($this->userCorrect))
+            return $this->userCorrect;
+        
+        if(trim(mb_strtolower($this->correctAnswer)) == trim(mb_strtolower($this->userAnswer))) {
+            $this->userCorrect = true;
             return true;
+        }
 
+        $this->userCorrect = false;
         return false;
     }
 
@@ -51,7 +60,7 @@ class QuestionText
     public function getRender()
     {
         if(empty($this->renderer)) {
-            $this->renderer = Yii::createObject($this->renderClass);
+            $this->renderer = Yii::createObject($this->renderClass, [$this]);
         }
 
         return $this->renderer;

@@ -10,6 +10,8 @@ class QuestionOne
     public $variants;
     public $correctAnswer;
     public $userAnswer;
+    public $text;
+    public $userCorrect;
     
     private $renderClass = '\gypsyk\quiz\models\renders\qone_render\QuestionOneRender';
     private $renderer;
@@ -18,6 +20,7 @@ class QuestionOne
     {
         $jCorrectAnswer = Json::decode($ar_question->r_answers, false);
         $this->correctAnswer = $jCorrectAnswer;
+        $this->text = $ar_question->question;
         
         foreach (Json::decode($ar_question->answers, false) as $jVariant) {
             $isCorrect = ($jCorrectAnswer == $jVariant->id) ? true : false; 
@@ -47,9 +50,15 @@ class QuestionOne
      */
     public function isUserAnswerIsCorrect()
     {
-        if($this->correctAnswer == $this->userAnswer)
+        if(!empty($this->userCorrect))
+            return $this->userCorrect;
+            
+        if($this->correctAnswer == $this->userAnswer) {
+            $this->userCorrect = true;
             return true;
+        }
 
+        $this->userCorrect = false;
         return false;
     }
 
@@ -62,7 +71,7 @@ class QuestionOne
     public function getRender()
     {
         if(empty($this->renderer)) {
-            $this->renderer = Yii::createObject($this->renderClass); 
+            $this->renderer = Yii::createObject($this->renderClass, [$this]);
         } 
         
         return $this->renderer;
