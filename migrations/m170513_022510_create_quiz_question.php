@@ -1,9 +1,8 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
-class m170511_020708_create_quiz_tables extends Migration
+class m170513_022510_create_quiz_question extends Migration
 {
     public function up()
     {
