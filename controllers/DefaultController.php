@@ -2,20 +2,15 @@
 
 namespace gypsyk\quiz\controllers;
 
-use gypsyk\quiz\models\AR_QuizQuestion;
-use gypsyk\quiz\models\Question;
-use gypsyk\quiz\models\Quiz;
 use Yii;
 use yii\helpers\Json;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use gypsyk\quiz\models\AR_QuizTest;
-use yii\web\NotAcceptableHttpException;
+use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest};
+use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpException};
 
 /**
  * Default controller for the `quiz` module
  */
-class DefaultController extends Controller
+class DefaultController extends \yii\web\Controller
 {
     /**
      * Renders the index view for the module

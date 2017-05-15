@@ -4,20 +4,15 @@ namespace gypsyk\quiz\models\questions;
 
 use Yii;
 use yii\helpers\Json;
+use gypsyk\quiz\models\questions\AbstractQuestion;
 
-class QuestionOne
+class QuestionOne extends AbstractQuestion
 {
     public $variants;
-    public $correctAnswer;
-    public $userAnswer;
-    public $text;
-    public $userCorrect;
-    
-    private $renderClass = '\gypsyk\quiz\models\renders\qone_render\QuestionOneRender';
-    private $renderer;
     
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
+        $this->renderClass = '\gypsyk\quiz\models\renders\qone_render\QuestionOneRender';
         $jCorrectAnswer = Json::decode($ar_question->r_answers, false);
         $this->correctAnswer = $jCorrectAnswer;
         $this->text = $ar_question->question;
@@ -60,20 +55,5 @@ class QuestionOne
 
         $this->userCorrect = false;
         return false;
-    }
-
-    /**
-     * Get the question render object
-     * 
-     * @return object
-     * @throws \yii\base\InvalidConfigException
-     */
-    public function getRender()
-    {
-        if(empty($this->renderer)) {
-            $this->renderer = Yii::createObject($this->renderClass, [$this]);
-        } 
-        
-        return $this->renderer;
     }
 }
