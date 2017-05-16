@@ -6,22 +6,11 @@ use yii\helpers\Url;
 /* @var $answers[] obj */
 ?>
 <p>
-    <?= $questionModel->question ?>
+    <?= $questionText ?>
 </p>
 
 <?= Html::beginForm()?>
-    <?php if($questionModel->type == 1): ?>
-        <?= $this->render('q_type/one', ['answers' => $answers]) ?>
-    <?php endif; ?>
-
-    <?php if($questionModel->type == 2): ?>
-        <?= $this->render('q_type/many', ['answers' => $answers]) ?>
-    <?php endif; ?>
-
-    <?php if($questionModel->type == 3): ?>
-        <?= $this->render('q_type/custom') ?>
-    <?php endif; ?>
-
+    <?= $questionRender ?>
     <?= Html::submitButton('Ответить', ['class' => 'btn btn-success', 'name' => 'save_btn', 'value' => '1'])?>
     <?= Html::submitButton('Завершить тест', ['class' => 'btn btn-danger'])?>
 <?= Html::endForm()?>

@@ -2,6 +2,7 @@
 namespace gypsyk\quiz\models\questions;
 
 use Yii;
+use yii\helpers\Html;
 
 class AbstractQuestion
 {
@@ -9,6 +10,7 @@ class AbstractQuestion
     public $text;
     public $correctAnswer;
     public $userAnswer;
+    public $jsonVariants;
     
     protected $renderClass;
     protected $renderer;
@@ -26,5 +28,15 @@ class AbstractQuestion
         }
 
         return $this->renderer;
+    }
+
+    /**
+     * Get the text of the question
+     * 
+     * @return string
+     */
+    public function getQuestionText()
+    {
+        return Html::encode($this->text);
     }
 }

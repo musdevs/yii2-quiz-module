@@ -3,6 +3,8 @@
 namespace gypsyk\quiz\models;
 
 use Yii;
+use gypsyk\quiz\models\helpers\QuestionsTypeMapper;
+use gypsyk\quiz\models\AR_QuizQuestion;
 
 /**
  * Class Quiz
@@ -12,7 +14,8 @@ class Quiz
 {
     public $questions;
     public $idsMap;
-    public $statistics;    
+    public $statistics;
+    public $testId;
 
     protected $classQuestionOne = '\gypsyk\quiz\models\questions\QuestionOne';
     protected $classQuestionMultiple = '\gypsyk\quiz\models\questions\QuestionMultiple';
@@ -79,5 +82,31 @@ class Quiz
         $this->statistics['points'] = $points;
         $this->statistics['rightAnswersCount'] = $rightAnswersCount;
         $this->statistics['wrongAnswersCount'] = $wrongAnswersCount;
+    }
+
+    /**
+     * Save the question to database
+     *
+     * @param $parameters
+     * @param $test_id
+     * @return mixed
+     */
+    public static function saveQuestionToDb($parameters, $test_id)
+    {
+        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeId($parameters['question_type']);
+
+        return forward_static_call([$qClass, 'saveToDb'], Yii::$app->request->post(), $test_id);
+    }
+
+    public static function getQuestionObjectById($id)
+    {
+        $questionModel = AR_QuizQuestion::findOne($id);
+
+        if(empty($questionModel))
+            return false;
+
+        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeName($questionModel->getTypeCode());
+
+        return Yii::createObject($qClass, [$questionModel]);
     }
 }

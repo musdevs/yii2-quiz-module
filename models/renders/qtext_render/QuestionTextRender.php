@@ -19,4 +19,14 @@ class QuestionTextRender extends \yii\base\View
     {
         return parent::render($this->viewFilePath . 'result', ['question' => $this->question], new Context());
     }
+
+    /**
+     * Render the view part of question on quiz page
+     *
+     * @return string
+     */
+    public function renderTesting()
+    {
+        return parent::render($this->viewFilePath . 'testing', [], new Context());
+    }
 }

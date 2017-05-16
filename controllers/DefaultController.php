@@ -23,8 +23,8 @@ class DefaultController extends \yii\web\Controller
 
     public function actionTest($question)
     {
-        Yii::$app->session->open();
         $session = Yii::$app->session;
+        $session->open();
 
         if(empty($session['currentTestId'])) {
             throw new BadRequestHttpException('Во время загрузки вопросов произошла ошибка. Попрубуйте зайти в тест заново');
@@ -34,7 +34,7 @@ class DefaultController extends \yii\web\Controller
             throw new NotAcceptableHttpException('Доступ к тесту невозможен после его завершения');
         }
         
-        $questionModel = AR_QuizQuestion::findOne($session['questionIds'][$question]);
+        $qModel = Quiz::getQuestionObjectById($session['questionIds'][$question]);
 
         if(Yii::$app->request->isPost) {
 
@@ -51,9 +51,9 @@ class DefaultController extends \yii\web\Controller
         }
 
         return $this->render('test', [
-            'questionModel' => $questionModel,
-            'questionList' => $session['questionIds'],
-            'answers' => Json::decode($questionModel->answers, false)
+            'questionText' => $qModel->getQuestionText(),
+            'questionRender' => $qModel->getRender()->renderTesting(Json::decode($qModel->jsonVariants, false)),
+            'questionList' => $session['questionIds']
         ]);
     }
 
@@ -80,6 +80,13 @@ class DefaultController extends \yii\web\Controller
         return $this->redirect(['test', 'question' => 1]);
     }
 
+    /**
+     * Enter to quiz
+     *
+     * @param $test_id
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionTestIndex($test_id)
     {
         if(empty($test_id)) {

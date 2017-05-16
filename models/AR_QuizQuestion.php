@@ -79,4 +79,14 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
     {
         return $this->hasOne(AR_QuizQuestionType::className(), ['id' => 'type']);
     }
+
+    /**
+     * Get question type code
+     *
+     * @return mixed
+     */
+    public function getTypeCode()
+    {
+        return $this->type_q->code;
+    }
 }

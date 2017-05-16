@@ -5,6 +5,8 @@ namespace gypsyk\quiz\models\questions;
 use Yii;
 use yii\helpers\Json;
 use gypsyk\quiz\models\questions\AbstractQuestion;
+use gypsyk\quiz\models\AR_QuizQuestion;
+use yii\helpers\ArrayHelper;
 
 class QuestionText extends AbstractQuestion
 {
@@ -14,6 +16,7 @@ class QuestionText extends AbstractQuestion
         $jCorrectAnswers = Json::decode($ar_question->answers, false)[0];
         $this->correctAnswer = $jCorrectAnswers->text;
         $this->text = $ar_question->question;
+        $this->jsonVariants = $ar_question->answers;
     }
 
     /**
@@ -43,6 +46,26 @@ class QuestionText extends AbstractQuestion
 
         $this->userCorrect = false;
         return false;
+    }
+
+    public static function saveToDb($parameters, $test_id)
+    {
+        $question = new AR_QuizQuestion();
+        $question->question = $parameters['question_text'];
+        $question->type = $parameters['question_type'];
+
+        //Prepare the right answer
+        $item['id'] = Yii::$app->security->generateRandomString(5);
+        $item['text'] = Yii::$app->request->post('custom');
+        $right[] = $item;
+        $rightId = $item['id'];
+
+        $question->answers = Json::encode($right);
+        $question->r_answers = Json::encode($rightId);
+
+        $question->test_id = $test_id;
+
+        return $question->save();
     }
 
 
