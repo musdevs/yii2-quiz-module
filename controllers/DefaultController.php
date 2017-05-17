@@ -3,6 +3,7 @@
 namespace gypsyk\quiz\controllers;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest};
 use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpException};
@@ -21,6 +22,14 @@ class DefaultController extends \yii\web\Controller
         return $this->render('index');
     }
 
+    /**
+     * Page for rendering test question
+     * 
+     * @param $question
+     * @return string|\yii\web\Response
+     * @throws BadRequestHttpException
+     * @throws NotAcceptableHttpException
+     */
     public function actionTest($question)
     {
         $session = Yii::$app->session;
@@ -38,7 +47,13 @@ class DefaultController extends \yii\web\Controller
 
         if(Yii::$app->request->isPost) {
 
-            $_SESSION['answers'][$question] = Yii::$app->request->post('answer');
+            if(array_key_exists($question, $session['answers'])) {
+                $answersTemp = $session['answers'];
+                $answersTemp[$question] = Yii::$app->request->post('answer');
+                $session['answers'] = $answersTemp;
+            } else {
+                $session['answers'] = ArrayHelper::merge($session['answers'], [$question => Yii::$app->request->post('answer')]);
+            }
 
             if(Yii::$app->request->post('save_btn')) {
                 $max = max(array_keys($session['questionIds']));
@@ -57,6 +72,13 @@ class DefaultController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Proxy page for init session vars
+     * 
+     * @param $test_id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionEnter($test_id)
     {
         if(empty($test_id)) {
@@ -65,8 +87,8 @@ class DefaultController extends \yii\web\Controller
 
         $testModel = AR_QuizTest::findone($test_id);
 
-        Yii::$app->session->open();
         $session = Yii::$app->session;
+        $session->open();
 
         //Clear all the quiz session vars
         $session->remove('currentTestId');
@@ -76,6 +98,7 @@ class DefaultController extends \yii\web\Controller
 
         $session['currentTestId'] = $test_id;
         $session['questionIds'] = AR_QuizQuestion::getShuffledQuestionArray($test_id);
+        $session['answers'] = [];
 
         return $this->redirect(['test', 'question' => 1]);
     }
@@ -100,16 +123,21 @@ class DefaultController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Page for displaying the results of testing
+     * 
+     * @return string
+     */
     public function actionResults()
     {
-        Yii::$app->session->open();
         $session = Yii::$app->session;
+        $session->open();
         $session['isResults'] = true;
 
         $questionList = AR_QuizQuestion::findAll(['test_id' => $session['currentTestId']]);
 
         $quizModel = new Quiz($questionList, $session['questionIds']);
-        $quizModel->loadUserAnswers($_SESSION['answers']);
+        $quizModel->loadUserAnswers($session['answers']);
         $quizModel->checkAnswers();
 
         return $this->render('results', [

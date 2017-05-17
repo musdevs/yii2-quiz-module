@@ -16,6 +16,11 @@ class AdminController extends Controller
         return $this->render('index');
     }
 
+    /**
+     * Page for creating the test
+     *
+     * @return string|\yii\web\Response
+     */
     public function actionCreate()
     {
         $testModel = new AR_QuizTest();
@@ -33,6 +38,13 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * Page for adding new question to test
+     *
+     * @param $test_id int - test id from database
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionNewQuestion($test_id)
     {
         if(empty($test_id)) {
