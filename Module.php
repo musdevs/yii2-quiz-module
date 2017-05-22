@@ -4,6 +4,9 @@ namespace gypsyk\quiz;
 
 class Module extends \yii\base\Module
 {
+    public $showTestListOnIndex = true;
+    public $testListMaxItems = 10;
+    
     /**
      * @inheritdoc
      */

@@ -1,6 +1,7 @@
 <?php
-use yii\helpers\Html;
-use yii\helpers\Url;
+    use yii\helpers\Html;
+    use yii\helpers\Url;
+
 /* @var $questionModel gypsyk\quiz\models\AR_QuizQuestion */
 /* @var $questionList[] integer */
 /* @var $answers[] obj */
@@ -12,7 +13,7 @@ use yii\helpers\Url;
 <?= Html::beginForm()?>
     <?= $questionRender ?>
     <?= Html::submitButton('Ответить', ['class' => 'btn btn-success', 'name' => 'save_btn', 'value' => '1'])?>
-    <?= Html::submitButton('Завершить тест', ['class' => 'btn btn-danger'])?>
+    <?= Html::a('Завершить тест', Url::to(['results']), ['class' => 'btn btn-danger'])?>
 <?= Html::endForm()?>
 
 <ul class="pagination">

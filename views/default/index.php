@@ -1,12 +1,30 @@
-<div class="quiz-default-index">
-    <h1><?= $this->context->action->uniqueId ?></h1>
-    <p>
-        This is the view content for action "<?= $this->context->action->id ?>".
-        The action belongs to the controller "<?= get_class($this->context) ?>"
-        in the "<?= $this->context->module->id ?>" module.
-    </p>
-    <p>
-        You may customize this page by editing the following file:<br>
-        <code><?= __FILE__ ?></code>
-    </p>
+<?php
+    use yii\widgets\LinkPager;
+    use yii\helpers\Html;
+    use yii\helpers\Url;
+?>
+<h2>Список тестов</h2>
+<div class="g_test_list_table_wrapper">
+    <table class="table table-striped">
+        <?php foreach($testList as $item): ?>
+            <tr>
+                <td>
+                    <?= $item->name ?>
+                </td>
+                <td align="right">
+                    <?= Html::a('Перейти', Url::to(['test-index', 'test_id' => $item['id']]), [
+                        'class' => 'btn btn-primary btn-small'
+                    ])?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
 </div>
+<?= LinkPager::widget(['pagination' => $pages]); ?>
+
+<?php $script = <<< CSS
+    .g_test_list_table_wrapper {
+        min-height: 400px;
+    }
+CSS;
+$this->registerCss($script); ?>

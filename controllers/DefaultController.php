@@ -3,10 +3,11 @@
 namespace gypsyk\quiz\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
+use yii\data\ActiveDataProvider;
+use yii\helpers\{Json, ArrayHelper};
 use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest};
 use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpException};
+
 
 /**
  * Default controller for the `quiz` module
@@ -14,12 +15,27 @@ use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpEx
 class DefaultController extends \yii\web\Controller
 {
     /**
-     * Renders the index view for the module
+     * Renders the list of tests
+     *
      * @return string
+     * @throws NotFoundHttpException
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if(!Yii::$app->controller->module->showTestListOnIndex)
+            throw new NotFoundHttpException('Такой страницы не существует');
+        
+        $provider = new ActiveDataProvider([
+            'query' => AR_QuizTest::find(),
+            'pagination' => [
+                'pageSize' => Yii::$app->controller->module->testListMaxItems,
+            ],
+        ]);
+
+        return $this->render('index', [
+            'testList' => $provider->getModels(),
+            'pages' => $provider->getPagination()
+        ]);
     }
 
     /**
