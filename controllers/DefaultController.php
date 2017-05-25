@@ -78,7 +78,9 @@ class DefaultController extends \yii\web\Controller
         return $this->render('test', [
             'questionText' => $qModel->getQuestionText(),
             'questionRender' => $qModel->getRender()->renderTesting(Json::decode($qModel->jsonVariants, false)),
-            'questionList' => $session->getVar('questionIds')
+            'questionList' => $session->getVar('questionIds'),
+            'questionId' => $question,
+            'sAnswers' => $session->getVar('answers')
         ]);
     }
 
