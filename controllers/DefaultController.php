@@ -4,8 +4,8 @@ namespace gypsyk\quiz\controllers;
 
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\{Json, ArrayHelper};
-use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest};
+use yii\helpers\{Json};
+use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest, TestSession};
 use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpException};
 
 
@@ -41,38 +41,32 @@ class DefaultController extends \yii\web\Controller
     /**
      * Page for rendering test question
      * 
-     * @param $question
+     * @param $question - index number of question
      * @return string|\yii\web\Response
      * @throws BadRequestHttpException
      * @throws NotAcceptableHttpException
      */
     public function actionTest($question)
     {
-        $session = Yii::$app->session;
-        $session->open();
+        $session = new TestSession($question);
 
-        if(empty($session['currentTestId'])) {
+        if(empty($session->getVar('currentTestId'))) {
             throw new BadRequestHttpException('Во время загрузки вопросов произошла ошибка. Попрубуйте зайти в тест заново');
         }
 
-        if(!empty($session['isResults']) && $session['isResults']) {
+        if($session->checkTestIsOver()) {
             throw new NotAcceptableHttpException('Доступ к тесту невозможен после его завершения');
         }
         
-        $qModel = Quiz::getQuestionObjectById($session['questionIds'][$question]);
+        $qModel = Quiz::getQuestionObjectById($session->getRealQuestionNumber($question));
 
         if(Yii::$app->request->isPost) {
 
-            if(array_key_exists($question, $session['answers'])) {
-                $answersTemp = $session['answers'];
-                $answersTemp[$question] = Yii::$app->request->post('answer');
-                $session['answers'] = $answersTemp;
-            } else {
-                $session['answers'] = ArrayHelper::merge($session['answers'], [$question => Yii::$app->request->post('answer')]);
-            }
+            //$_POST['anser] keeps the symbolic code of users choosed variants
+            $session->saveUserAnswer(Yii::$app->request->post('answer'));
 
             if(Yii::$app->request->post('save_btn')) {
-                $max = max(array_keys($session['questionIds']));
+                $max = $session->getMaxTestQuestionNumber();
                 if((int)$question < $max) {
                     return $this->redirect(['test', 'question' => $question+1]);
                 } else {
@@ -84,7 +78,7 @@ class DefaultController extends \yii\web\Controller
         return $this->render('test', [
             'questionText' => $qModel->getQuestionText(),
             'questionRender' => $qModel->getRender()->renderTesting(Json::decode($qModel->jsonVariants, false)),
-            'questionList' => $session['questionIds']
+            'questionList' => $session->getVar('questionIds')
         ]);
     }
 
@@ -101,20 +95,8 @@ class DefaultController extends \yii\web\Controller
             throw new NotFoundHttpException('Такого теста не найдено');
         }
 
-        $testModel = AR_QuizTest::findone($test_id);
-
-        $session = Yii::$app->session;
-        $session->open();
-
-        //Clear all the quiz session vars
-        $session->remove('currentTestId');
-        $session->remove('questionIds');
-        $session->remove('answers');
-        $session->remove('isResults');
-
-        $session['currentTestId'] = $test_id;
-        $session['questionIds'] = AR_QuizQuestion::getShuffledQuestionArray($test_id);
-        $session['answers'] = [];
+        $session = new TestSession();
+        $session->prepareForNewTest($test_id, AR_QuizQuestion::getShuffledQuestionArray($test_id));
 
         return $this->redirect(['test', 'question' => 1]);
     }
@@ -132,7 +114,7 @@ class DefaultController extends \yii\web\Controller
             throw new NotFoundHttpException('Такого теста не найдено');
         }
 
-        $testModel = AR_QuizTest::findone($test_id);
+        $testModel = AR_QuizTest::findOne($test_id);
 
         return $this->render('test_index', [
             'testModel' => $testModel
@@ -146,20 +128,17 @@ class DefaultController extends \yii\web\Controller
      */
     public function actionResults()
     {
-        $session = Yii::$app->session;
-        $session->open();
-        $session['isResults'] = true;
+        $session = new TestSession();
+        $session->markTestAsOver();
 
-        $questionList = AR_QuizQuestion::findAll(['test_id' => $session['currentTestId']]);
+        $questionList = AR_QuizQuestion::findAll(['test_id' => $session->getVar('currentTestId')]);
 
-        $quizModel = new Quiz($questionList, $session['questionIds']);
-        $quizModel->loadUserAnswers($session['answers']);
+        $quizModel = new Quiz($questionList, $session->getVar('questionIds'));
+        $quizModel->loadUserAnswers($session->getVar('answers'));
         $quizModel->checkAnswers();
 
         return $this->render('results', [
             'quizModel' => $quizModel            
         ]);
-
-
     }
 }

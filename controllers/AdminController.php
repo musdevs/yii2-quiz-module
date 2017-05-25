@@ -60,7 +60,7 @@ class AdminController extends Controller
         }
         
         $questionList = AR_QuizQuestion::getTestQuestions($test_id);
-        $testModel = AR_QuizTest::findone($test_id);
+        $testModel = AR_QuizTest::findOne($test_id);
 
         return $this->render('new_question', [
             'questionList' => $questionList,
