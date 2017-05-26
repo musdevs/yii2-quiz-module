@@ -3,14 +3,13 @@
 namespace gypsyk\quiz\models;
 
 use Yii;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 
 /**
  * This is the model class for table "quiz_test".
  *
  * @property integer $id
  * @property string $name
+ * @property string $description
  *
  */
 class AR_QuizTest extends \yii\db\ActiveRecord
@@ -31,6 +30,7 @@ class AR_QuizTest extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
+            [['description'], 'string', 'max' => 1000],
         ];
     }
 
@@ -42,14 +42,7 @@ class AR_QuizTest extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Тема теста',
+            'description' => 'Описание'
         ];
     }
-    
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-//    public function getQuizQuestions()
-//    {
-//        return $this->hasMany(QuizQuestion::className(), ['test_id' => 'id']);
-//    }
 }

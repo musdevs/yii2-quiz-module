@@ -89,4 +89,15 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
     {
         return $this->type_q->code;
     }
+
+    /**
+     * Count the questions in test
+     * 
+     * @param $test_id
+     * @return int
+     */
+    public static function count($test_id)
+    {
+        return count(static::findAll(['test_id' => $test_id]));
+    }
 }

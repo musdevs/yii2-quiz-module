@@ -3,6 +3,7 @@
 namespace gypsyk\quiz\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "quiz_question_type".
@@ -11,7 +12,6 @@ use Yii;
  * @property string $description
  * @property string $code
  *
- * @property QuizQuestion[] $quizQuestions
  */
 class AR_QuizQuestionType extends \yii\db\ActiveRecord
 {
@@ -44,13 +44,5 @@ class AR_QuizQuestionType extends \yii\db\ActiveRecord
             'description' => 'Description',
             'code' => 'Code',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getQuizQuestions()
-    {
-        return $this->hasMany(QuizQuestion::className(), ['type' => 'id']);
     }
 }

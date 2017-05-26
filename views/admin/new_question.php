@@ -4,7 +4,10 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $questionList[] gypsyk\quiz\models\AR_QuizQuestion */
 /* @var $testModel gypsyk\quiz\models\AR_QuizTest */
+
+$this->title = 'Добавить вопрос. ' . $testModel->name;
 ?>
+
 <div class="row">
     <div class="col-xs-6">
         <?= Html::beginForm()?>
@@ -14,14 +17,9 @@ use yii\helpers\Html;
             </div>
             <div class="form-group">
                 <?= Html::label('Тип ответа')?>
-                <?= Html::dropDownList('question_type', null, [
-                        0 => 'Выберите тип ответа...',
-                        1 => 'Один правильный',
-                        2 => 'Несколько правильных',
-                        3 => 'Ответ текстом',
-                    ], [
-                        'class' => 'form-control',
-                        'options'=>['0' => ['disabled' => true, 'selected' => true]]
+                <?= Html::dropDownList('question_type', null, $tList, [
+                    'class' => 'form-control',
+                    'options'=>['0' => ['disabled' => true, 'selected' => true]]
                 ])?>
             </div>
 
@@ -29,8 +27,8 @@ use yii\helpers\Html;
             <?= $this->render('new_question/question_many')?>
             <?= $this->render('new_question/question_custom')?>
             
-            <?= Html::submitButton('Сохранить и добавить еще', ['class' => 'btn btn-success pull-right'])?>
-            <?= Html::submitButton('Завершить создание', ['class' => 'btn btn-primary pull-right'])?>
+            <?= Html::submitButton('Сохранить и добавить еще', ['class' => 'btn btn-success pull-right g_btn'])?>
+            <?= Html::submitButton('Завершить создание', ['class' => 'btn btn-primary pull-right g_btn'])?>
             <div class="clearfix"></div>
         <?= Html::endForm()?>
     </div>
@@ -58,19 +56,3 @@ $this->registerJs($script, yii\web\View::POS_READY); ?>
     }
 JS;
 $this->registerJs($script, yii\web\View::POS_END); ?>
-
-<?php $script = <<< CSS
-    .g_answer_container {
-        display: none;
-    }
-    .right-answers {
-        display: none;
-    }
-    .help-block {
-        display: none;    
-    }
-    .has-success .help-block {
-        display: block;
-    }
-CSS;
-$this->registerCss($script); ?>

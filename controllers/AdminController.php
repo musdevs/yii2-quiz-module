@@ -2,15 +2,24 @@
 
 namespace gypsyk\quiz\controllers;
 
-use gypsyk\quiz\models\AR_QuizQuestion;
-use gypsyk\quiz\models\AR_QuizTest;
-use gypsyk\quiz\models\Quiz;
 use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use yii\helpers\ArrayHelper;
+use yii\web\{Controller, NotFoundHttpException};
+use gypsyk\quiz\models\{Quiz, AR_QuizTest, AR_QuizQuestionType, AR_QuizQuestion};
 
 class AdminController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        \gypsyk\quiz\assets\QuizModuleAsset::register($this->getView()); //is this a good practice?))
+
+        return true;
+    }
+    
     public function actionIndex()
     {
         return $this->render('index');
@@ -62,9 +71,16 @@ class AdminController extends Controller
         $questionList = AR_QuizQuestion::getTestQuestions($test_id);
         $testModel = AR_QuizTest::findOne($test_id);
 
+        $types = AR_QuizQuestionType::find()->all();
+        $tList[0] = Yii::$app->controller->module->t('app', 'Select type of answer...');
+        foreach ($types as $type) {
+            $tList[$type->getPrimaryKey()] = Yii::$app->controller->module->t('app', $type->description);
+        }
+        
         return $this->render('new_question', [
             'questionList' => $questionList,
-            'testModel' => $testModel
+            'testModel' => $testModel,
+            'tList' => $tList
         ]);
     }
 }

@@ -1,15 +1,33 @@
 <?php
-    use yii\helpers\Html;
-    use yii\helpers\Url;
+use yii\helpers\{Html, Url};
+
+/* @var $questionText string */
+/* @var $questionRender string */
+/* @var $testTitle string */
+/* @var $questionList array - question numbers map */
+/* @var $questionId integer - number of question in current test session */
+
+$this->title = \Yii::$app->controller->module->t('app', 'Question № {questionNumber}. {testTitle}', [
+    'questionNumber' => $questionId,
+    'testTitle' => $testTitle
+]);
+
 ?>
 <p>
-    <?= $questionText ?>
+    <?= Html::encode($questionText)?>
 </p>
 
 <?= Html::beginForm()?>
     <?= $questionRender ?>
-    <?= Html::submitButton('Ответить', ['class' => 'btn btn-success', 'name' => 'save_btn', 'value' => '1'])?>
-    <?= Html::a('Завершить тест', Url::to(['results']), ['class' => 'btn btn-danger', 'id'=>'g_end_test_btn'])?>
+    <?= Html::submitButton(
+        \Yii::$app->controller->module->t('app', 'Answer'),
+        ['class' => 'btn btn-success', 'name' => 'save_btn', 'value' => '1']
+    )?>
+    <?= Html::a(
+        \Yii::$app->controller->module->t('app', 'Finish testing'),
+        Url::to(['results']),
+        ['class' => 'btn btn-danger', 'id'=>'g_end_test_btn']
+    )?>
 <?= Html::endForm()?>
 
 <ul class="pagination">
@@ -24,12 +42,15 @@
         </li>
     <?php endforeach; ?>
 </ul>
-
+<?php
+$confirmMessage = \Yii::$app->controller->module->t('app', 'Are you sure you want to finish the test? You will not be able to change your answers.');
+?>
 <?php $script = <<< JS
     $('#g_end_test_btn').click(function(event) {
         var href = this.href;
         event.preventDefault();
-        var isOver = confirm("Вы уверены, что хотите завершить тест? Изменить ваши ответы будет невозможно.");
+        var isOver = confirm("$confirmMessage");
+        
         if(isOver)
             window.location = href;
     })

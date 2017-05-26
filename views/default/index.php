@@ -1,7 +1,6 @@
 <?php
     use yii\widgets\LinkPager;
-    use yii\helpers\Html;
-    use yii\helpers\Url;
+    use yii\helpers\{Html, Url};
 ?>
 <h2>Список тестов</h2>
 <div class="g_test_list_table_wrapper">
@@ -21,10 +20,3 @@
     </table>
 </div>
 <?= LinkPager::widget(['pagination' => $pages]); ?>
-
-<?php $script = <<< CSS
-    .g_test_list_table_wrapper {
-        min-height: 400px;
-    }
-CSS;
-$this->registerCss($script); ?>

@@ -14,6 +14,17 @@ use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpEx
  */
 class DefaultController extends \yii\web\Controller
 {
+    public function beforeAction($action)
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        \gypsyk\quiz\assets\QuizModuleAsset::register($this->getView());  //is this a good practice?))
+
+        return true;
+    }
+
     /**
      * Renders the list of tests
      *
@@ -31,7 +42,7 @@ class DefaultController extends \yii\web\Controller
                 'pageSize' => Yii::$app->controller->module->testListMaxItems,
             ],
         ]);
-
+        
         return $this->render('index', [
             'testList' => $provider->getModels(),
             'pages' => $provider->getPagination()
@@ -59,10 +70,11 @@ class DefaultController extends \yii\web\Controller
         }
         
         $qModel = Quiz::getQuestionObjectById($session->getRealQuestionNumber($question));
+        $testTitle = AR_QuizTest::findOne($session->getVar('currentTestId'))->name;
 
         if(Yii::$app->request->isPost) {
 
-            //$_POST['anser] keeps the symbolic code of users choosed variants
+            //$_POST['answer] keeps the symbolic code of users choosed variants
             $session->saveUserAnswer(Yii::$app->request->post('answer'));
 
             if(Yii::$app->request->post('save_btn')) {
@@ -80,7 +92,8 @@ class DefaultController extends \yii\web\Controller
             'questionRender' => $qModel->getRender()->renderTesting(Json::decode($qModel->jsonVariants, false)),
             'questionList' => $session->getVar('questionIds'),
             'questionId' => $question,
-            'sAnswers' => $session->getVar('answers')
+            'sAnswers' => $session->getVar('answers'),
+            'testTitle' => $testTitle
         ]);
     }
 
@@ -117,9 +130,11 @@ class DefaultController extends \yii\web\Controller
         }
 
         $testModel = AR_QuizTest::findOne($test_id);
+        $countQuestion = AR_QuizQuestion::count($test_id);
 
         return $this->render('test_index', [
-            'testModel' => $testModel
+            'testModel' => $testModel,
+            'countQuestion' => $countQuestion
         ]);
     }
 
