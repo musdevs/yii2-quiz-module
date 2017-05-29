@@ -4,7 +4,7 @@ namespace gypsyk\quiz\models\questions;
 use Yii;
 use yii\helpers\Html;
 
-class AbstractQuestion
+abstract class AbstractQuestion
 {
     public $userCorrect;
     public $text;
@@ -16,15 +16,16 @@ class AbstractQuestion
     protected $renderer;
 
     /**
-     * Get the question render object
+     * Get the question render object. And load question object to it.
      *
      * @return object
      * @throws \yii\base\InvalidConfigException
      */
-    public function getRender()
+    public function loadRender()
     {
         if(empty($this->renderer)) {
-            $this->renderer = Yii::createObject($this->renderClass, [$this]);
+            $this->renderer = Yii::createObject($this->renderClass);
+            $this->renderer->loadQuestion($this);
         }
 
         return $this->renderer;
@@ -39,4 +40,6 @@ class AbstractQuestion
     {
         return Html::encode($this->text);
     }
+
+    public abstract static function getRenderClass();
 }

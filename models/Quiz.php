@@ -98,6 +98,13 @@ class Quiz
         return forward_static_call([$qClass, 'saveToDb'], Yii::$app->request->post(), $test_id);
     }
 
+    /**
+     * Create and return question object 
+     * 
+     * @param $id
+     * @return bool|object
+     * @throws \yii\base\InvalidConfigException
+     */
     public static function getQuestionObjectById($id)
     {
         $questionModel = AR_QuizQuestion::findOne($id);
@@ -108,5 +115,18 @@ class Quiz
         $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeName($questionModel->getTypeCode());
 
         return Yii::createObject($qClass, [$questionModel]);
+    }
+    
+    public static function renderQuestionCreate($viewObject)
+    {
+        $questionClassesList = QuestionsTypeMapper::getAllClasses();
+        $renderResult = '';
+
+        foreach ($questionClassesList as $questionClass) {
+            $render = Yii::createObject($questionClass::getRenderClass());
+            $renderResult .= $render->renderCreate($viewObject);
+        }
+        
+        return $renderResult; 
     }
 }

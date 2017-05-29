@@ -63,4 +63,4 @@ $inputChk_many = Html::checkbox('question_answers', false, ['data-control' => 'c
         input.parent('div').toggleClass('has-success');
     }
 JS;
-$this->registerJs($script, yii\web\View::POS_END); ?>
+$parentViewObject->registerJs($script, yii\web\View::POS_END); ?>

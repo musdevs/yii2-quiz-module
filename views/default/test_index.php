@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\{Html, Url};
 
+/* @var $this yii\web\View */
 /* @var $testModel gypsyk\quiz\models\AR_QuizTest */
 /* @var $countQuestion integer */
 

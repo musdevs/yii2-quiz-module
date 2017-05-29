@@ -1,21 +1,8 @@
-.g_answer_container {
-    display: none;
-}
-.right-answers {
-    display: none;
-}
-.help-block {
-    display: none;
-}
-.has-success .help-block {
-    display: block;
-}
-.g_btn {
-    margin-left: 10px;
-}
-.g_desc_wrapper {
-    width: 400px;
-}
-.g_test_list_table_wrapper {
-    min-height: 400px;
-}
+.g_answer_container { display: none; }
+.right-answers { display: none; }
+.help-block { display: none; }
+.has-success .help-block { display: block; }
+.g_btn { margin-left: 10px; }
+.g_desc_wrapper { width: 400px; }
+.g_test_list_table_wrapper { min-height: 400px;margin-top: 20px;}
+.g-heading-btn {margin-top: 20px;}

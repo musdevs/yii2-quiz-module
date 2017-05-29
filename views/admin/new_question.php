@@ -2,38 +2,53 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $questionList[] gypsyk\quiz\models\AR_QuizQuestion */
-/* @var $testModel gypsyk\quiz\models\AR_QuizTest */
+/* @var $tList array - select options (question types) */
+/* @var $testModel \gypsyk\quiz\models\AR_QuizTest */
+/* @var $questionList \gypsyk\quiz\models\AR_QuizQuestion[] */
+/* @var $questionViews  string - result of concatenation of all question renderers renderCreate() functions;  */
 
-$this->title = 'Добавить вопрос. ' . $testModel->name;
+$this->title = \Yii::$app->controller->module->t('app', 'Add question.  {testName}.', [
+    'testName' => $testModel->name
+]);
 ?>
 
 <div class="row">
     <div class="col-xs-6">
         <?= Html::beginForm()?>
             <div class="form-group">
-                <?= Html::label('Текст вопроса')?>
-                <?= Html::textarea('question_text', '', ['class' => 'form-control', 'rows' => 7, 'placeholder' => 'Введите текст вопроса'])?>
+                <?= Html::label(\Yii::$app->controller->module->t('app', 'Question text'))?>
+                <?= Html::textarea('question_text', '', [
+                    'class' => 'form-control', 
+                    'rows' => 7, 
+                    'placeholder' => \Yii::$app->controller->module->t('app', 'Enter the text of the question')]
+                )?>
             </div>
             <div class="form-group">
-                <?= Html::label('Тип ответа')?>
+                <?= Html::label(\Yii::$app->controller->module->t('app', 'Type of answer'))?>
                 <?= Html::dropDownList('question_type', null, $tList, [
                     'class' => 'form-control',
                     'options'=>['0' => ['disabled' => true, 'selected' => true]]
                 ])?>
             </div>
 
-            <?= $this->render('new_question/question_one')?>
-            <?= $this->render('new_question/question_many')?>
-            <?= $this->render('new_question/question_custom')?>
+            <?= $questionViews ?>
             
-            <?= Html::submitButton('Сохранить и добавить еще', ['class' => 'btn btn-success pull-right g_btn'])?>
-            <?= Html::submitButton('Завершить создание', ['class' => 'btn btn-primary pull-right g_btn'])?>
+            <?= Html::submitButton(
+                \Yii::$app->controller->module->t('app', 'Save and add more'),
+                ['class' => 'btn btn-success pull-right g_btn']
+            )?>
+            <?= Html::submitButton(
+                \Yii::$app->controller->module->t('app', 'Complete creation'),
+                ['class' => 'btn btn-primary pull-right g_btn']
+            )?>
             <div class="clearfix"></div>
         <?= Html::endForm()?>
     </div>
     <div class="col-xs-6">
-        <h3><small>Тест: </small><?= $testModel->name?></h3>
+        <h3>
+            <small><?= \Yii::$app->controller->module->t('app', 'Test')?>: </small>
+            <?= $testModel->name?>
+        </h3>
         <ol>
             <?php foreach($questionList as $question): ?>
                 <li><?= $question->question ?></li>

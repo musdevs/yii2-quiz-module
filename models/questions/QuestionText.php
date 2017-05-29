@@ -12,11 +12,21 @@ class QuestionText extends AbstractQuestion
 {
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
-        $this->renderClass = '\gypsyk\quiz\models\renders\qtext_render\QuestionTextRender'; 
+        $this->renderClass = self::getRenderClass(); 
         $jCorrectAnswers = Json::decode($ar_question->answers, false)[0];
         $this->correctAnswer = $jCorrectAnswers->text;
         $this->text = $ar_question->question;
         $this->jsonVariants = $ar_question->answers;
+    }
+
+    /**
+     * Return question render class
+     *
+     * @return string
+     */
+    public static function getRenderClass()
+    {
+        return '\gypsyk\quiz\models\renders\qtext_render\QuestionTextRender';
     }
 
     /**

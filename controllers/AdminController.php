@@ -6,6 +6,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\web\{Controller, NotFoundHttpException};
 use gypsyk\quiz\models\{Quiz, AR_QuizTest, AR_QuizQuestionType, AR_QuizQuestion};
+use yii\data\ActiveDataProvider;
 
 class AdminController extends Controller
 {
@@ -22,7 +23,17 @@ class AdminController extends Controller
     
     public function actionIndex()
     {
-        return $this->render('index');
+        $provider = new ActiveDataProvider([
+            'query' => AR_QuizTest::find(),
+            'pagination' => [
+                'pageSize' => Yii::$app->controller->module->testListMaxItems,
+            ],
+        ]);
+
+        return $this->render('index', [
+            'testList' => $provider->getModels(),
+            'pages' => $provider->getPagination()
+        ]);
     }
 
     /**
@@ -80,7 +91,8 @@ class AdminController extends Controller
         return $this->render('new_question', [
             'questionList' => $questionList,
             'testModel' => $testModel,
-            'tList' => $tList
+            'tList' => $tList,
+            'questionViews' => Quiz::renderQuestionCreate($this->getView())
         ]);
     }
 }

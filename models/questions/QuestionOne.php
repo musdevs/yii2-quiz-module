@@ -14,7 +14,7 @@ class QuestionOne extends AbstractQuestion
     
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
-        $this->renderClass = '\gypsyk\quiz\models\renders\qone_render\QuestionOneRender';
+        $this->renderClass = self::getRenderClass();
         $jCorrectAnswer = Json::decode($ar_question->r_answers, false);
         $this->correctAnswer = $jCorrectAnswer;
         $this->text = $ar_question->question;
@@ -28,6 +28,16 @@ class QuestionOne extends AbstractQuestion
                 'is_user_checked' => false
             ];
         }    
+    }
+
+    /**
+     * Return question render class
+     * 
+     * @return string
+     */
+    public static function getRenderClass()
+    {
+        return '\gypsyk\quiz\models\renders\qone_render\QuestionOneRender';
     }
 
     /**
@@ -60,6 +70,13 @@ class QuestionOne extends AbstractQuestion
         return false;
     }
 
+    /**
+     * Save question to database
+     * 
+     * @param $parameters
+     * @param $test_id
+     * @return bool
+     */
     public static function saveToDb($parameters, $test_id)
     {
         $question = new AR_QuizQuestion();

@@ -14,7 +14,7 @@ class QuestionMultiple extends AbstractQuestion
 
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
-        $this->renderClass = '\gypsyk\quiz\models\renders\qmultiple_render\QuestionMultipleRender'; 
+        $this->renderClass = self::getRenderClass(); 
         $jcorrectAnswer = Json::decode($ar_question->r_answers, false);
         $this->correctAnswer = $jcorrectAnswer;
         $this->text = $ar_question->question;
@@ -28,6 +28,16 @@ class QuestionMultiple extends AbstractQuestion
                 'is_user_checked' => false
             ];
         }
+    }
+
+    /**
+     * Return question render class
+     *
+     * @return string
+     */
+    public static function getRenderClass()
+    {
+        return '\gypsyk\quiz\models\renders\qmultiple_render\QuestionMultipleRender';
     }
 
     /**

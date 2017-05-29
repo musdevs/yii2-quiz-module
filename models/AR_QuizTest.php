@@ -2,8 +2,6 @@
 
 namespace gypsyk\quiz\models;
 
-use Yii;
-
 /**
  * This is the model class for table "quiz_test".
  *
@@ -40,9 +38,9 @@ class AR_QuizTest extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Тема теста',
-            'description' => 'Описание'
+            'name' => \gypsyk\quiz\Module::t('app', 'Test name'),
+            'description' => \gypsyk\quiz\Module::t('app', 'Description')
         ];
+
     }
 }

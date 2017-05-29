@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\{Html, Url};
 
+/* @var $this yii\web\View */
 /* @var $questionText string */
 /* @var $questionRender string */
 /* @var $testTitle string */

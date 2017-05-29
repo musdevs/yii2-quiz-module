@@ -77,4 +77,4 @@ $inputChk_one = Html::checkbox('question_answers', false, ['data-control' => 'ch
         input.parent('div').removeClass('has-success');
     }
 JS;
-$this->registerJs($script, yii\web\View::POS_END); ?>
+$parentViewObject->registerJs($script, yii\web\View::POS_END); ?>

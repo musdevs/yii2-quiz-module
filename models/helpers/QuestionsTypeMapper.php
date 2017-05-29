@@ -32,4 +32,16 @@ class QuestionsTypeMapper
 
         return $this->map[$arType->code];
     }
+
+    /**
+     * Get all question classes list
+     * 
+     * @return array
+     */
+    public static function getAllClasses()
+    {
+        $classes = new static();
+
+        return array_values($classes->map);
+    }
 }
