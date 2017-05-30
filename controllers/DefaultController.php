@@ -4,23 +4,37 @@ namespace gypsyk\quiz\controllers;
 
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\helpers\{Json};
 use gypsyk\quiz\models\{AR_QuizQuestion, Quiz, AR_QuizTest, TestSession};
 use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpException};
 
-
 /**
  * Default controller for the `quiz` module
+ *
+ * Class DefaultController
+ * @package gypsyk\quiz\controllers
  */
 class DefaultController extends \yii\web\Controller
 {
+    /**
+     * Includes some necessary assets
+     *
+     * @param $view
+     */
+    private function preparePage($view)
+    {
+        \gypsyk\quiz\assets\QuizModuleAsset::register($view);  //is this a good practice?))
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function beforeAction($action)
     {
         if (!parent::beforeAction($action)) {
             return false;
         }
 
-        \gypsyk\quiz\assets\QuizModuleAsset::register($this->getView());  //is this a good practice?))
+        $this->preparePage($this->getView());
 
         return true;
     }
@@ -89,7 +103,8 @@ class DefaultController extends \yii\web\Controller
 
         return $this->render('test', [
             'questionText' => $qModel->getQuestionText(),
-            'questionRender' => $qModel->loadRender()->renderTesting(Json::decode($qModel->jsonVariants, false)),
+            'questionRender' => $qModel->loadRender(),
+            'jsonVariants' => $qModel->jsonVariants,
             'questionList' => $session->getVar('questionIds'),
             'questionId' => $question,
             'sAnswers' => $session->getVar('answers'),
@@ -117,7 +132,7 @@ class DefaultController extends \yii\web\Controller
     }
 
     /**
-     * Enter to quiz
+     * The index page of test
      *
      * @param $test_id
      * @return string

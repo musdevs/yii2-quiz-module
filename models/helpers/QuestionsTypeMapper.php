@@ -4,8 +4,17 @@ namespace gypsyk\quiz\models\helpers;
 
 use gypsyk\quiz\models\AR_QuizQuestionType;
 
+/**
+ * Class for mapping question class name and code of type 
+ * 
+ * Class QuestionsTypeMapper
+ * @package gypsyk\quiz\models\helpers
+ */
 class QuestionsTypeMapper
 {
+    /**
+     * Array to store map info
+     */
     private $map;
 
     public function __construct()
@@ -15,6 +24,12 @@ class QuestionsTypeMapper
         $this->map['TEXT'] = '\gypsyk\quiz\models\questions\QuestionText';
     }
 
+    /**
+     * Get question class name by its code name
+     * 
+     * @param $type_name
+     * @return bool
+     */
     public function getQuestionClassByTypeName($type_name)
     {
         if(!array_key_exists($type_name, $this->map))
@@ -23,6 +38,12 @@ class QuestionsTypeMapper
         return $this->map[$type_name];
     }
 
+    /**
+     * Get question class name by its codes database id
+     * 
+     * @param $type_id
+     * @return bool
+     */
     public function getQuestionClassByTypeId($type_id)
     {
         $arType = AR_QuizQuestionType::findOne($type_id);

@@ -1,7 +1,9 @@
 <?php
 use yii\helpers\Html;
 
-/* @var $answers[] obj */
+/* @var $answers array - Array of json decoded objects from `quiz_question`.`answers ` field  */
+/* @var $this yii\web\View */
+/* @var $sAnswer string - user answer_id stored in session */
 ?>
 <table class="table">
     <?php foreach($answers as $answer): ?>
@@ -9,14 +11,14 @@ use yii\helpers\Html;
             <td class="col-xs-1">
                 <?= Html::radio(
                     'answer',
-                    !empty($_SESSION['answers'][Yii::$app->request->get('question')]) && $answer->id == $_SESSION['answers'][Yii::$app->request->get('question')],
+                    !empty($sAnswer) && $answer->id == $sAnswer,
                     [
                         'value' => $answer->id,
                         'required' => 'required'
                     ])
                 ?>
             </td>
-            <td><?= $answer->text ?></td>
+            <td><?= Html::decode($answer->text) ?></td>
         </tr>
     <?php endforeach; ?>
 </table>

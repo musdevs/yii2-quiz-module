@@ -31,7 +31,7 @@ $this->title = \Yii::$app->controller->module->t('app', 'Add question.  {testNam
                 ])?>
             </div>
 
-            <?= $questionViews ?>
+            <?= \gypsyk\quiz\models\Quiz::renderQuestionCreate($this) ?>
             
             <?= Html::submitButton(
                 \Yii::$app->controller->module->t('app', 'Save and add more'),

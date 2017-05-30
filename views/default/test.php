@@ -1,25 +1,27 @@
 <?php
-use yii\helpers\{Html, Url};
+use yii\helpers\{Html, Url, Json};
 
 /* @var $this yii\web\View */
 /* @var $questionText string */
-/* @var $questionRender string */
+/* @var $questionRender object - object of \gypsyk\quiz\models\renders\* class */
 /* @var $testTitle string */
 /* @var $questionList array - question numbers map */
 /* @var $questionId integer - number of question in current test session */
+/* @var $jsonVariants string - Json string from `quiz_question`.`answers` field */
+/* @var $sAnswers array - Array of user answers stored in session */
 
 $this->title = \Yii::$app->controller->module->t('app', 'Question № {questionNumber}. {testTitle}', [
     'questionNumber' => $questionId,
     'testTitle' => $testTitle
 ]);
-
 ?>
+
 <p>
-    <?= Html::encode($questionText)?>
+    <?= Html::decode($questionText)?>
 </p>
 
 <?= Html::beginForm()?>
-    <?= $questionRender ?>
+    <?= $questionRender->renderTesting(Json::decode($jsonVariants, false), $sAnswers[$questionId] ?? null) ?>
     <?= Html::submitButton(
         \Yii::$app->controller->module->t('app', 'Answer'),
         ['class' => 'btn btn-success', 'name' => 'save_btn', 'value' => '1']

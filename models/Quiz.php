@@ -17,10 +17,6 @@ class Quiz
     public $statistics;
     public $testId;
 
-    protected $classQuestionOne = '\gypsyk\quiz\models\questions\QuestionOne';
-    protected $classQuestionMultiple = '\gypsyk\quiz\models\questions\QuestionMultiple';
-    protected $classQuestionText = '\gypsyk\quiz\models\questions\QuestionText';
-
     /**
      * Quiz constructor.
      *
@@ -29,19 +25,14 @@ class Quiz
     public function __construct($ar_questions, $id_map)
     {
         $this->idsMap = $id_map;
+        $classMap = new QuestionsTypeMapper();
+
         foreach($ar_questions as $question) {
-
-            if($question->type_q->code == constant(get_class($question) . '::'. 'TYPE_ONE')) {
-                $this->questions[array_search($question->getPrimaryKey(), $id_map)] = Yii::createObject($this->classQuestionOne, [$question]);
-            }
-
-            if($question->type_q->code == constant(get_class($question) . '::'. 'TYPE_MULTIPLE')) {
-                $this->questions[array_search($question->getPrimaryKey(), $id_map)] = Yii::createObject($this->classQuestionMultiple, [$question]);
-            }
-
-            if($question->type_q->code == constant(get_class($question) . '::'. 'TYPE_TEXT')) {
-                $this->questions[array_search($question->getPrimaryKey(), $id_map)] = Yii::createObject($this->classQuestionText, [$question]);
-            }
+            $sessionQuestionNumber = array_search($question->getPrimaryKey(), $id_map);
+            $this->questions[$sessionQuestionNumber] = Yii::createObject(
+                $classMap->getQuestionClassByTypeName($question->type_q->code),
+                [$question]
+            );
         }
     }
 

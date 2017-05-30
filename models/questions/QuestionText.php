@@ -3,13 +3,15 @@
 namespace gypsyk\quiz\models\questions;
 
 use Yii;
-use yii\helpers\Json;
-use gypsyk\quiz\models\questions\AbstractQuestion;
+use yii\helpers\{Json};
 use gypsyk\quiz\models\AR_QuizQuestion;
-use yii\helpers\ArrayHelper;
 
-class QuestionText extends AbstractQuestion
+class QuestionText extends \gypsyk\quiz\models\questions\AbstractQuestion
 {
+    /**
+     * QuestionText constructor.
+     * @param AR_QuizQuestion $ar_question
+     */
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
         $this->renderClass = self::getRenderClass(); 
@@ -20,9 +22,7 @@ class QuestionText extends AbstractQuestion
     }
 
     /**
-     * Return question render class
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getRenderClass()
     {
@@ -30,19 +30,17 @@ class QuestionText extends AbstractQuestion
     }
 
     /**
-     * Загрузить сделанный пользователем ответ
-     *
+     * Save user answer
+     * 
      * @param string $session_answer
      */
-    public function loadUserAnswer(string $session_answer)
+    public function loadUserAnswer($session_answer)
     {
         $this->userAnswer = $session_answer;
     }
 
     /**
-     * Проверка правильности ответа на вопрос
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isUserAnswerIsCorrect()
     {
@@ -58,6 +56,9 @@ class QuestionText extends AbstractQuestion
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public static function saveToDb($parameters, $test_id)
     {
         $question = new AR_QuizQuestion();
@@ -77,6 +78,4 @@ class QuestionText extends AbstractQuestion
 
         return $question->save();
     }
-
-
 }

@@ -3,24 +3,47 @@
 namespace gypsyk\quiz\controllers;
 
 use Yii;
-use yii\helpers\ArrayHelper;
+use yii\data\ActiveDataProvider;
 use yii\web\{Controller, NotFoundHttpException};
 use gypsyk\quiz\models\{Quiz, AR_QuizTest, AR_QuizQuestionType, AR_QuizQuestion};
-use yii\data\ActiveDataProvider;
 
+/**
+ * Controller for administration
+ *
+ * Class AdminController
+ * @package gypsyk\quiz\controllers
+ */
 class AdminController extends Controller
 {
+    /**
+     * Includes some necessary assets
+     *
+     * @param $view
+     */
+    private function preparePage($view)
+    {
+        \gypsyk\quiz\assets\QuizModuleAsset::register($view);  //is this a good practice?))
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function beforeAction($action)
     {
         if (!parent::beforeAction($action)) {
             return false;
         }
 
-        \gypsyk\quiz\assets\QuizModuleAsset::register($this->getView()); //is this a good practice?))
+        $this->preparePage($this->getView());
 
         return true;
     }
-    
+
+    /**
+     * Render the list of tests
+     * 
+     * @return string
+     */
     public function actionIndex()
     {
         $provider = new ActiveDataProvider([
@@ -91,8 +114,7 @@ class AdminController extends Controller
         return $this->render('new_question', [
             'questionList' => $questionList,
             'testModel' => $testModel,
-            'tList' => $tList,
-            'questionViews' => Quiz::renderQuestionCreate($this->getView())
+            'tList' => $tList
         ]);
     }
 }

@@ -3,15 +3,21 @@
 namespace gypsyk\quiz\models\questions;
 
 use Yii;
-use yii\helpers\Json;
-use gypsyk\quiz\models\questions\AbstractQuestion;
+use yii\helpers\{Json, ArrayHelper};
 use gypsyk\quiz\models\AR_QuizQuestion;
-use yii\helpers\ArrayHelper;
 
-class QuestionOne extends AbstractQuestion
+/**
+ * Class that representing the question that have only one correct answer
+ * 
+ * Class QuestionOne
+ * @package gypsyk\quiz\models\questions
+ */
+class QuestionOne extends \gypsyk\quiz\models\questions\AbstractQuestion
 {
-    public $variants;
-    
+    /**
+     * QuestionOne constructor.
+     * @param AR_QuizQuestion $ar_question
+     */
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
         $this->renderClass = self::getRenderClass();
@@ -31,9 +37,7 @@ class QuestionOne extends AbstractQuestion
     }
 
     /**
-     * Return question render class
-     * 
-     * @return string
+     * @inheritdoc
      */
     public static function getRenderClass()
     {
@@ -41,20 +45,18 @@ class QuestionOne extends AbstractQuestion
     }
 
     /**
-     * Пометить сделанный пользователем ответ
+     * Mark a variant as user checked and save the user answer
      * 
      * @param string $session_answer
      */
-    public function loadUserAnswer(string $session_answer)
+    public function loadUserAnswer($session_answer)
     {
         $this->variants[$session_answer]['is_user_checked'] = true;
         $this->userAnswer = $session_answer;
     }
 
     /**
-     * Проверка правльности ответа на вопрос
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isUserAnswerIsCorrect()
     {
@@ -71,11 +73,7 @@ class QuestionOne extends AbstractQuestion
     }
 
     /**
-     * Save question to database
-     * 
-     * @param $parameters
-     * @param $test_id
-     * @return bool
+     * @inheritdoc
      */
     public static function saveToDb($parameters, $test_id)
     {

@@ -119,4 +119,14 @@ class TestSession
     {
         $this->session['isResults'] = true;
     }
+
+
+    public function getPreviousAnswer()
+    {
+        if(!empty($this->session['answers'][$this->qSessionNumber])) {
+            return $this->session['answers'][$this->qSessionNumber];
+        } else {
+            return null;
+        }
+    }
 }

@@ -3,15 +3,21 @@
 namespace gypsyk\quiz\models\questions;
 
 use Yii;
-use yii\helpers\Json;
-use gypsyk\quiz\models\questions\AbstractQuestion;
+use yii\helpers\{Json, ArrayHelper};
 use gypsyk\quiz\models\AR_QuizQuestion;
-use yii\helpers\ArrayHelper;
 
-class QuestionMultiple extends AbstractQuestion
+/**
+ * Class for representing question that have multiple correct answers
+ * 
+ * Class QuestionMultiple
+ * @package gypsyk\quiz\models\questions
+ */
+class QuestionMultiple extends \gypsyk\quiz\models\questions\AbstractQuestion
 {
-    public $variants;
-
+    /**
+     * QuestionMultiple constructor.
+     * @param AR_QuizQuestion $ar_question
+     */
     public function __construct(\gypsyk\quiz\models\AR_QuizQuestion $ar_question)
     {
         $this->renderClass = self::getRenderClass(); 
@@ -31,9 +37,7 @@ class QuestionMultiple extends AbstractQuestion
     }
 
     /**
-     * Return question render class
-     *
-     * @return string
+     * @inheritdoc
      */
     public static function getRenderClass()
     {
@@ -41,11 +45,11 @@ class QuestionMultiple extends AbstractQuestion
     }
 
     /**
-     * Пометить сделанный пользователем ответ
+     * Mark a variant as user checked and save the user answer
      *
      * @param array $session_answer
      */
-    public function loadUserAnswer(array $session_answer)
+    public function loadUserAnswer($session_answer)
     {
         foreach ($session_answer as $answer) {
             $this->variants[$answer]['is_user_checked'] = true;    
@@ -54,9 +58,7 @@ class QuestionMultiple extends AbstractQuestion
     }
 
     /**
-     * Проверка правльности ответа на вопрос
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function isUserAnswerIsCorrect()
     {
@@ -72,6 +74,9 @@ class QuestionMultiple extends AbstractQuestion
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public static function saveToDb($parameters, $test_id)
     {
         $question = new AR_QuizQuestion();
