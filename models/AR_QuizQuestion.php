@@ -15,8 +15,6 @@ use gypsyk\quiz\models\AR_QuizQuestionType;
  * @property string $r_answers
  * @property string $test_id
  * 
- *
- * @property QuizQuestionType $type0
  */
 class AR_QuizQuestion extends \yii\db\ActiveRecord
 {
@@ -43,15 +41,21 @@ class AR_QuizQuestion extends \yii\db\ActiveRecord
             [['question', 'answers', 'r_answers'], 'string'],
         ];
     }
-    
+
+    /**
+     * Return the AR array of questions with needed $test_id
+     *
+     * @param $test_id
+     * @return static[]
+     */
     public static function getTestQuestions($test_id)
     {
         return static::findAll(['test_id' => $test_id]);
     }
 
     /**
-     * Перемешивает вопросы теста.
-     * Возвращает массив вида [1 => 43, 2 => 46, ... {counter} => {db_id}]
+     * Shuffle the test question.
+     * Returns array:  [1 => 43, 2 => 46, ... {counter} => {db_id}]
      *
      * @param $test_id
      * @return array

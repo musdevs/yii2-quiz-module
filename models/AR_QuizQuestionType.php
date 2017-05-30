@@ -33,16 +33,4 @@ class AR_QuizQuestionType extends \yii\db\ActiveRecord
             [['description', 'code'], 'string'],
         ];
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'description' => 'Description',
-            'code' => 'Code',
-        ];
-    }
 }

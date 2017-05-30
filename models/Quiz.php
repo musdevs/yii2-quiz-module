@@ -3,24 +3,42 @@
 namespace gypsyk\quiz\models;
 
 use Yii;
-use gypsyk\quiz\models\helpers\QuestionsTypeMapper;
 use gypsyk\quiz\models\AR_QuizQuestion;
+use gypsyk\quiz\models\helpers\QuestionsTypeMapper;
+
 
 /**
+ * Class for working with test data
+ *
  * Class Quiz
  * @package gypsyk\quiz\models
  */
 class Quiz
 {
+    /**
+     * @var array - Array of instances \gypsyk\quiz\models\questions\*
+     */
     public $questions;
+
+    /**
+     * @var array - Array for mapping question numbers. Example: [1 => 43, 2 => 46, ... {counter} => {db_id}]
+     */
     public $idsMap;
+
+    /**
+     * @var array - Keeps statistic info. Array keys are: maxPoints, points, rightAnswersCount, wrongAnswersCount
+     */
     public $statistics;
+
+    /**
+     * @var integer - Test id from database
+     */
     public $testId;
 
     /**
      * Quiz constructor.
-     *
-     * @param \gypsyk\quiz\models\AR_QuizQuestion[] $ar_questions
+     * @param $ar_questions array
+     * @param $id_map array
      */
     public function __construct($ar_questions, $id_map)
     {
@@ -37,7 +55,7 @@ class Quiz
     }
 
     /**
-     * Загрузить ответы пользователя
+     * Load user answers
      * 
      * @param $session_answers
      */
@@ -86,7 +104,7 @@ class Quiz
     {
         $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeId($parameters['question_type']);
 
-        return forward_static_call([$qClass, 'saveToDb'], Yii::$app->request->post(), $test_id);
+        return forward_static_call([$qClass, 'saveToDb'], $parameters, $test_id);
     }
 
     /**
@@ -107,7 +125,14 @@ class Quiz
 
         return Yii::createObject($qClass, [$questionModel]);
     }
-    
+
+    /**
+     * Return the render part contains question create form
+     * 
+     * @param $viewObject
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
     public static function renderQuestionCreate($viewObject)
     {
         $questionClassesList = QuestionsTypeMapper::getAllClasses();

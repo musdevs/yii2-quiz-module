@@ -11,11 +11,20 @@ use yii\helpers\ArrayHelper;
  */
 class TestSession
 {
+    /**
+     * @var mixed|\yii\web\Session
+     */
     private $session;
 
-    //Current question number from question page
+    /**
+     * @var null - question number parameter from url
+     */
     private $qSessionNumber;
-    
+
+    /**
+     * TestSession constructor.
+     * @param null $current_question_session_number
+     */
     public function __construct($current_question_session_number = null)
     {
         $this->session = Yii::$app->session;
@@ -118,15 +127,5 @@ class TestSession
     public function markTestAsOver()
     {
         $this->session['isResults'] = true;
-    }
-
-
-    public function getPreviousAnswer()
-    {
-        if(!empty($this->session['answers'][$this->qSessionNumber])) {
-            return $this->session['answers'][$this->qSessionNumber];
-        } else {
-            return null;
-        }
     }
 }

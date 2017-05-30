@@ -3,9 +3,20 @@ namespace gypsyk\quiz\models\renders;
 
 use gypsyk\quiz\models\renders\Context;
 
+/**
+ * Class AbstractQuestionRender
+ * @package gypsyk\quiz\models\renders
+ */
 abstract class AbstractQuestionRender extends \yii\web\View
 {
+    /**
+     * @var object - object of \gypsyk\quiz\models\questions\* class
+     */
     public $question;
+
+    /**
+     * @var string - Keeps the path to renderer views
+     */
     public static $viewFilePath;
 
     /**
@@ -29,22 +40,25 @@ abstract class AbstractQuestionRender extends \yii\web\View
     }
 
     /**
-     * Render the view part of question on quiz page
+     * Render the view part when testing in process
      *
+     * @param null $variants
+     * @param null $sAnswer
      * @return string
      */
-    public function renderTesting($answers = null, $sAnswer = null)
+    public function renderTesting($variants = null, $sAnswer = null)
     {
         return parent::render(
             self::$viewFilePath . 'testing', 
-            ['answers' => $answers, 'sAnswer' => $sAnswer], 
+            ['answers' => $variants, 'sAnswer' => $sAnswer],
             new Context()
         );
     }
 
     /**
      * Render the view part of question on create page
-     *
+     * 
+     * @param $parentViewObject - object of yii\web\View class. Needs for register scripts to correct view
      * @return string
      */
     public function renderCreate($parentViewObject)
