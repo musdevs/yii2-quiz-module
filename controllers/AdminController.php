@@ -117,4 +117,36 @@ class AdminController extends Controller
             'tList' => $tList
         ]);
     }
+
+    public function actionEditQuestion($question_id)
+    {
+        if(empty($question_id)) {
+            throw new NotFoundHttpException('Такого вопроса не найдено');
+        }
+
+        $questionModel = AR_QuizQuestion::findOne($question_id);
+        $test_id = $questionModel->test_id;
+
+        if(Yii::$app->request->isPost) {
+            $result = Quiz::saveQuestionToDb(Yii::$app->request->post(), $test_id);
+
+            if($result) {
+                return $this->refresh();
+            }
+        }
+
+        $testModel = AR_QuizTest::findOne($test_id);
+
+        $types = AR_QuizQuestionType::find()->all();
+        $tList[0] = Yii::$app->controller->module->t('app', 'Select type of answer...');
+        foreach ($types as $type) {
+            $tList[$type->getPrimaryKey()] = Yii::$app->controller->module->t('app', $type->description);
+        }
+
+        return $this->render('edit_question', [
+            'testModel' => $testModel,
+            'questionModel' => $questionModel,
+            'tList' => $tList,
+        ]);
+    }
 }

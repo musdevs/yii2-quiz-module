@@ -25,6 +25,7 @@ class QuestionMultiple extends \gypsyk\quiz\models\questions\AbstractQuestion
         $this->correctAnswer = $jcorrectAnswer;
         $this->text = $ar_question->question;
         $this->jsonVariants = $ar_question->answers;
+        $this->questionTypeId = $ar_question->type;
 
         foreach (Json::decode($ar_question->answers, false) as $jVariant) {
             $isCorrect = in_array($jVariant->id, $jcorrectAnswer) ? true : false;

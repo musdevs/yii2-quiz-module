@@ -2,6 +2,7 @@
 
 namespace gypsyk\quiz\models\helpers;
 
+use yii\helpers\ArrayHelper;
 use gypsyk\quiz\models\AR_QuizQuestionType;
 
 /**
@@ -19,9 +20,20 @@ class QuestionsTypeMapper
 
     public function __construct()
     {
-        $this->map['ONE'] = '\gypsyk\quiz\models\questions\QuestionOne';
-        $this->map['MULTIPLE'] = '\gypsyk\quiz\models\questions\QuestionMultiple';
-        $this->map['TEXT'] = '\gypsyk\quiz\models\questions\QuestionText';
+        $types = ArrayHelper::map(AR_QuizQuestionType::find()->all(),'id','code');
+
+        $this->map['ONE'] = [
+            'dbId' => array_search('ONE', $types),
+            'className' => '\gypsyk\quiz\models\questions\QuestionOne'
+        ];
+        $this->map['MULTIPLE'] = [
+            'dbId' => array_search('MULTIPLE', $types),
+            'className' => '\gypsyk\quiz\models\questions\QuestionMultiple'
+        ];
+        $this->map['TEXT'] = [
+            'dbId' => array_search('TEXT', $types),
+            'className' => '\gypsyk\quiz\models\questions\QuestionText'
+        ];
     }
 
     /**
@@ -35,7 +47,7 @@ class QuestionsTypeMapper
         if(!array_key_exists($type_name, $this->map))
             return false;
 
-        return $this->map[$type_name];
+        return $this->map[$type_name]['className'];
     }
 
     /**
@@ -46,12 +58,12 @@ class QuestionsTypeMapper
      */
     public function getQuestionClassByTypeId($type_id)
     {
-        $arType = AR_QuizQuestionType::findOne($type_id);
+        foreach($this->map as $item) {
+            if($item['dbId'] == $type_id)
+                return $item['className'];
+        }
 
-        if(empty($arType))
-            return false;
-
-        return $this->map[$arType->code];
+        return false;
     }
 
     /**
@@ -61,8 +73,31 @@ class QuestionsTypeMapper
      */
     public static function getAllClasses()
     {
-        $classes = new static();
+        $mapper = new static();
 
-        return array_values($classes->map);
+        $cArray = array_map(function($item) {
+            return $item['className'];
+        }, $mapper->map);
+
+        return array_values($cArray);
+    }
+
+    /**
+     * Return class map as [
+     *  <dbId> => <className>,
+     *  ...
+     * ]
+     * 
+     * @return mixed
+     */
+    public static function getIdMap()
+    {
+        $mapper = new static();
+
+        foreach($mapper->map as $item) {
+            $rArray[$item['dbId']] = $item['className'];
+        }
+
+        return $rArray;
     }
 }

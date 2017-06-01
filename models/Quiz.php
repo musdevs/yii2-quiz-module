@@ -135,14 +135,40 @@ class Quiz
      */
     public static function renderQuestionCreate($viewObject)
     {
-        $questionClassesList = QuestionsTypeMapper::getAllClasses();
+        $questionClassesList = QuestionsTypeMapper::getIdMap();
         $renderResult = '';
 
-        foreach ($questionClassesList as $questionClass) {
-            $render = Yii::createObject($questionClass::getRenderClass());
-            $renderResult .= $render->renderCreate($viewObject);
+        foreach ($questionClassesList as $qDbId => $qClassName) {
+            $render = Yii::createObject($qClassName::getRenderClass());
+            $renderResult .= $render->renderCreate($viewObject, $qDbId);
         }
         
         return $renderResult; 
+    }
+
+    public static function renderQuestionEdit($viewObject, $currentQuestionType, $variants, $answers)
+    {
+        $questionClassesList = QuestionsTypeMapper::getIdMap();
+        $renderResult = '';
+
+        foreach ($questionClassesList as $qDbId => $qClassName) {
+            $render = Yii::createObject($qClassName::getRenderClass());
+
+            //Mark as active and load data to view
+            if($currentQuestionType == $qDbId) {
+                $renderResult .= $render->renderEdit(
+                    $viewObject,
+                    $qDbId,
+                    true,
+                    $variants,
+                    $answers
+                );
+            } else { //Load view without data
+                $renderResult .= $render->renderCreate($viewObject, $qDbId);
+            }
+
+        }
+
+        return $renderResult;
     }
 }

@@ -49,7 +49,7 @@ abstract class AbstractQuestionRender extends \yii\web\View
     public function renderTesting($variants = null, $sAnswer = null)
     {
         return parent::render(
-            self::$viewFilePath . 'testing', 
+            static::$viewFilePath . 'testing', 
             ['answers' => $variants, 'sAnswer' => $sAnswer],
             new Context()
         );
@@ -61,8 +61,30 @@ abstract class AbstractQuestionRender extends \yii\web\View
      * @param $parentViewObject - object of yii\web\View class. Needs for register scripts to correct view
      * @return string
      */
-    public function renderCreate($parentViewObject)
+    public function renderCreate($parentViewObject, $type_id)
     {
-        return parent::render(self::$viewFilePath . 'create', ['parentViewObject' => $parentViewObject], new Context());
+        return parent::render(
+            static::$viewFilePath . 'create',
+            [
+                'parentViewObject' => $parentViewObject,
+                'questionTypeId' => $type_id
+            ],
+            new Context()
+        );
+    }
+
+    public function renderEdit($parentViewObject, $type_id, $isActive, $variants, $answers)
+    {
+        return parent::render(
+            static::$viewFilePath . 'edit',
+            [
+                'parentViewObject' => $parentViewObject,
+                'questionTypeId' => $type_id,
+                'isActive' => $isActive,
+                'variants' => $variants,
+                'answers' => $answers
+            ],
+            new Context()
+        );
     }
 }

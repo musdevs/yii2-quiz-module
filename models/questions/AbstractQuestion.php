@@ -49,6 +49,11 @@ abstract class AbstractQuestion implements QuestionInterface
     public $variants = null;
 
     /**
+     * @var integer - Question type id from database
+     */
+    public $questionTypeId;
+
+    /**
      * @var string - Keeps the class name of question render object
      */
     protected $renderClass;
@@ -81,6 +86,6 @@ abstract class AbstractQuestion implements QuestionInterface
      */
     public function getQuestionText()
     {
-        return Html::encode($this->text);
+        return Html::decode($this->text);
     }
 }

@@ -1,4 +1,5 @@
 .g_answer_container { display: none; }
+.g_answer_container.active { display: inherit; }
 .right-answers { display: none; }
 .help-block { display: none; }
 .has-success .help-block { display: block; }
@@ -6,3 +7,5 @@
 .g_desc_wrapper { width: 400px; }
 .g_test_list_table_wrapper { min-height: 400px;margin-top: 20px;}
 .g-heading-btn {margin-top: 20px;}
+.g_description_hidden {height: 60px; overflow: hidden;}
+.g_top20 {margin-top: 20px;}

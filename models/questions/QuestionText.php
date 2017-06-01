@@ -19,6 +19,7 @@ class QuestionText extends \gypsyk\quiz\models\questions\AbstractQuestion
         $this->correctAnswer = $jCorrectAnswers->text;
         $this->text = $ar_question->question;
         $this->jsonVariants = $ar_question->answers;
+        $this->questionTypeId = $ar_question->type;
     }
 
     /**
