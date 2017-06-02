@@ -52,11 +52,12 @@ $this->title = \Yii::$app->controller->module->t('app', 'Add question.  {testNam
     \Yii::$app->controller->module->t('app', 'Save'),
     ['class' => 'btn btn-success pull-right g_btn']
 )?>
-        <?= Html::submitButton(
-    \Yii::$app->controller->module->t('app', 'Back'),
-    ['class' => 'btn btn-primary pull-right g_btn']
+<?= Html::a(
+    'Back',
+    Url::to(['admin/new-question', 'test_id' => $testModel->getPrimaryKey()]),
+    ['class' => 'btn btn-default pull-right g_btn']
 )?>
-    <div class="clearfix"></div>
+<div class="clearfix"></div>
 <?= Html::endForm()?>
 
 <?php $script = <<< JS

@@ -15,6 +15,9 @@ use gypsyk\quiz\models\{Quiz, AR_QuizTest, AR_QuizQuestionType, AR_QuizQuestion}
  */
 class AdminController extends Controller
 {
+    const AJAX_FAIL = '{"result":"FAIL"}';
+    const AJAX_SUCCESS = '{"result":"SUCCESS"}';
+
     /**
      * Includes some necessary assets
      *
@@ -135,7 +138,6 @@ class AdminController extends Controller
         $test_id = $questionModel->test_id;
 
         if(Yii::$app->request->isPost) {
-            //$result = Quiz::saveQuestionToDb(Yii::$app->request->post(), $test_id);
             $result = Quiz::updateQuestionInDb(Yii::$app->request->post(), $question_id);
 
             if($result) {
@@ -156,5 +158,66 @@ class AdminController extends Controller
             'questionModel' => $questionModel,
             'tList' => $tList,
         ]);
+    }
+
+    /**
+     * Delete current variant from question
+     *
+     * @return string
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function actionDeleteQuestion()
+    {
+        if(!Yii::$app->request->isAjax || !Yii::$app->request->post('question_id'))
+            return self::AJAX_FAIL;
+
+        $question = AR_QuizQuestion::findOne(Yii::$app->request->post('question_id'));
+
+        if(empty($question))
+            return self::AJAX_FAIL;
+
+        if($question->delete())
+            return self::AJAX_SUCCESS;
+
+        return self::AJAX_FAIL;
+    }
+
+    /**
+     * Update test description
+     * 
+     * @return \yii\web\Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function actionUpdateDescription()
+    {
+        if(Yii::$app->request->isPost) {
+            $test = AR_QuizTest::findOne(Yii::$app->request->post('test_id'));
+            
+            $test->description = Yii::$app->request->post('description');
+            $test->update();
+            
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+    }
+
+    /**
+     * Update title
+     * 
+     * @return \yii\web\Response
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function actionUpdateTitle()
+    {
+        if(Yii::$app->request->isPost) {
+            $test = AR_QuizTest::findOne(Yii::$app->request->post('test_id'));
+
+            $test->name = Yii::$app->request->post('title');
+            $test->update();
+
+            return $this->redirect(Yii::$app->request->referrer);
+        }
     }
 }
