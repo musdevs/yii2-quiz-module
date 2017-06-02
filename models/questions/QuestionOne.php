@@ -76,14 +76,10 @@ class QuestionOne extends \gypsyk\quiz\models\questions\AbstractQuestion
     /**
      * @inheritdoc
      */
-    public static function saveToDb($parameters, $test_id)
+    public static function prepareAnswer($parameters)
     {
-        $question = new AR_QuizQuestion();
-        $question->question = $parameters['question_text'];
-        $question->type = $parameters['question_type'];
-
         //Prepare the wrong answers
-        foreach (Yii::$app->request->post('wrong_one') as $wrongOne) {
+        foreach ($parameters['wrong_one'] as $wrongOne) {
             $item['id'] = Yii::$app->security->generateRandomString(5);
             $item['text'] = $wrongOne;
             $wrong[] = $item;
@@ -91,16 +87,15 @@ class QuestionOne extends \gypsyk\quiz\models\questions\AbstractQuestion
 
         //Prepare the right answer
         $item['id'] = Yii::$app->security->generateRandomString(5);
-        $item['text'] = Yii::$app->request->post('right_one');
+        $item['text'] = $parameters['right_one'];
         $right[] = $item;
         $rightIds = $item['id'];
 
         $all = ArrayHelper::merge($wrong, $right);
 
-        $question->answers = Json::encode($all);
-        $question->r_answers = Json::encode($rightIds);
-        $question->test_id = $test_id;
-        
-        return $question->save();
+        $ret['answer'] = Json::encode($all);
+        $ret['r_answer'] = Json::encode($rightIds);
+
+        return $ret;
     }
 }

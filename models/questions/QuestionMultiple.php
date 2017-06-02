@@ -78,18 +78,14 @@ class QuestionMultiple extends \gypsyk\quiz\models\questions\AbstractQuestion
     /**
      * @inheritdoc
      */
-    public static function saveToDb($parameters, $test_id)
+    public static function prepareAnswer($parameters)
     {
-        $question = new AR_QuizQuestion();
-        $question->question = $parameters['question_text'];
-        $question->type = $parameters['question_type'];
-
-        foreach (Yii::$app->request->post('wrong_many') as $wrongMany) {
+        foreach ($parameters['wrong_many'] as $wrongMany) {
             $item['id'] = Yii::$app->security->generateRandomString(5);
             $item['text'] = $wrongMany;
             $wrong[] = $item;
         }
-        foreach (Yii::$app->request->post('right_many') as $rightMany) {
+        foreach ($parameters['right_many'] as $rightMany) {
             $item['id'] = Yii::$app->security->generateRandomString(5);
             $item['text'] = $rightMany;
             $right[] = $item;
@@ -97,10 +93,9 @@ class QuestionMultiple extends \gypsyk\quiz\models\questions\AbstractQuestion
         }
         $all = ArrayHelper::merge($wrong, $right);
 
-        $question->answers = Json::encode($all);
-        $question->r_answers = Json::encode($rightIds);
-        $question->test_id = $test_id;
+        $ret['answer'] = Json::encode($all);
+        $ret['r_answer'] = Json::encode($rightIds);
 
-        return $question->save();
+        return $ret;
     }
 }

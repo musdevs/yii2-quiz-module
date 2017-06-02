@@ -108,6 +108,20 @@ class Quiz
     }
 
     /**
+     * Update question in database
+     * 
+     * @param $parameters
+     * @param $question_id
+     * @return mixed
+     */
+    public static function updateQuestionInDb($parameters, $question_id)
+    {
+        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeId($parameters['question_type']);
+
+        return forward_static_call([$qClass, 'updateInDb'], $parameters, $question_id);
+    }
+
+    /**
      * Create and return question object 
      * 
      * @param $id

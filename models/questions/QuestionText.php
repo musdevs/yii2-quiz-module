@@ -60,23 +60,17 @@ class QuestionText extends \gypsyk\quiz\models\questions\AbstractQuestion
     /**
      * @inheritdoc
      */
-    public static function saveToDb($parameters, $test_id)
+    public static function prepareAnswer($parameters)
     {
-        $question = new AR_QuizQuestion();
-        $question->question = $parameters['question_text'];
-        $question->type = $parameters['question_type'];
-
         //Prepare the right answer
         $item['id'] = Yii::$app->security->generateRandomString(5);
-        $item['text'] = Yii::$app->request->post('custom');
+        $item['text'] = $parameters['custom'];
         $right[] = $item;
         $rightId = $item['id'];
 
-        $question->answers = Json::encode($right);
-        $question->r_answers = Json::encode($rightId);
+        $ret['answer'] = Json::encode($right);
+        $ret['r_answer'] = Json::encode($rightId);
 
-        $question->test_id = $test_id;
-
-        return $question->save();
+        return $ret;
     }
 }

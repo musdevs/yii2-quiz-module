@@ -49,11 +49,11 @@ $this->title = \Yii::$app->controller->module->t('app', 'Add question.  {testNam
         </div>
 </div>
 <?= Html::submitButton(
-    \Yii::$app->controller->module->t('app', 'Save and add more'),
+    \Yii::$app->controller->module->t('app', 'Save'),
     ['class' => 'btn btn-success pull-right g_btn']
 )?>
         <?= Html::submitButton(
-    \Yii::$app->controller->module->t('app', 'Complete creation'),
+    \Yii::$app->controller->module->t('app', 'Back'),
     ['class' => 'btn btn-primary pull-right g_btn']
 )?>
     <div class="clearfix"></div>

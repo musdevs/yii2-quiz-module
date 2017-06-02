@@ -3,6 +3,7 @@ namespace gypsyk\quiz\models\questions;
 
 use Yii;
 use yii\helpers\Html;
+use gypsyk\quiz\models\AR_QuizQuestion;
 
 /**
  * Main parent class for all question instances
@@ -88,4 +89,54 @@ abstract class AbstractQuestion implements QuestionInterface
     {
         return Html::decode($this->text);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public static function saveToDb($parameters, $test_id)
+    {
+        $question = new AR_QuizQuestion();
+        $question->question = $parameters['question_text'];
+        $question->type = $parameters['question_type'];
+
+        $pAnswers = static::prepareAnswer($parameters);
+
+        $question->answers = $pAnswers['answer'];
+        $question->r_answers = $pAnswers['r_answer'];
+
+        $question->test_id = $test_id;
+
+        return $question->save();
+    }
+
+    /**
+     * Update question data in database
+     *
+     * @param $parameters
+     * @param $question_id
+     * @return false|int
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public static function updateInDb($parameters, $question_id)
+    {
+        $question = AR_QuizQuestion::findOne($question_id);
+        $question->question = $parameters['question_text'];
+        $question->type = $parameters['question_type'];
+
+        $pAnswers = static::prepareAnswer($parameters);
+
+        $question->answers = $pAnswers['answer'];
+        $question->r_answers = $pAnswers['r_answer'];
+
+        return $question->update();
+    }
+
+    /**
+     * Preparing the variants and answers for database
+     *
+     * @param $parameters
+     * @return array - ['answer' => <json_encode_variants>, 'r_answer' => <json_encode_right_answers>]
+     */
+    abstract public static function prepareAnswer($parameters);
 }
