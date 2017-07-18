@@ -16,7 +16,7 @@ use gypsyk\quiz\models\helpers\QuestionsTypeMapper;
 class Quiz
 {
     /**
-     * @var array - Array of instances \gypsyk\quiz\models\questions\*
+     * @var \gypsyk\quiz\models\questions\QuestionInterface[] - Array of questions
      */
     public $questions;
 
@@ -39,18 +39,16 @@ class Quiz
      * Quiz constructor.
      * @param $ar_questions array
      * @param $id_map array
+     * @param $container \yii\di\Container
      */
-    public function __construct($ar_questions, $id_map)
+    public function __construct($ar_questions, $id_map, $container)
     {
         $this->idsMap = $id_map;
-        $classMap = new QuestionsTypeMapper();
 
         foreach($ar_questions as $question) {
-            $sessionQuestionNumber = array_search($question->getPrimaryKey(), $id_map);
-            $this->questions[$sessionQuestionNumber] = Yii::createObject(
-                $classMap->getQuestionClassByTypeName($question->type_q->code),
-                [$question]
-            );
+            $questionDbId = $question->getPrimaryKey();
+            $sessionQuestionNumber = array_search($questionDbId, $id_map);
+            $this->questions[$sessionQuestionNumber] = $container->get('Question', [$questionDbId]);
         }
     }
 
@@ -98,50 +96,33 @@ class Quiz
      *
      * @param $parameters
      * @param $test_id
+     * @param $container \yii\di\Container
      * @return mixed
      */
-    public static function saveQuestionToDb($parameters, $test_id)
+    public static function saveQuestionToDb($parameters, $test_id, $container)
     {
-        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeId($parameters['question_type']);
+        $qClass = $container->get('Mapper')->getQuestionClassByTypeId($parameters['question_type']);
 
         return forward_static_call([$qClass, 'saveToDb'], $parameters, $test_id);
     }
 
     /**
      * Update question in database
-     * 
+     *
      * @param $parameters
      * @param $question_id
+     * @param $container \yii\di\Container
      * @return mixed
      */
-    public static function updateQuestionInDb($parameters, $question_id)
+    public static function updateQuestionInDb($parameters, $question_id, $container)
     {
-        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeId($parameters['question_type']);
+        $qClass = $container->get('Mapper')->getQuestionClassByTypeId($parameters['question_type']);
 
         return forward_static_call([$qClass, 'updateInDb'], $parameters, $question_id);
     }
 
     /**
-     * Create and return question object 
-     * 
-     * @param $id
-     * @return bool|object
-     * @throws \yii\base\InvalidConfigException
-     */
-    public static function getQuestionObjectById($id)
-    {
-        $questionModel = AR_QuizQuestion::findOne($id);
-
-        if(empty($questionModel))
-            return false;
-
-        $qClass = (new QuestionsTypeMapper())->getQuestionClassByTypeName($questionModel->getTypeCode());
-
-        return Yii::createObject($qClass, [$questionModel]);
-    }
-
-    /**
-     * Return the render part contains question create form
+     * Return the render part contains question create forms
      * 
      * @param $viewObject
      * @return string

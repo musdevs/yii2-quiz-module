@@ -13,8 +13,14 @@ use yii\web\{NotAcceptableHttpException, NotFoundHttpException, BadRequestHttpEx
  * Class DefaultController
  * @package gypsyk\quiz\controllers
  */
+//TODO: Translate http_error messages
 class DefaultController extends \yii\web\Controller
 {
+    /**
+     * @var \yii\di\Container
+     */
+    protected $_container;
+
     /**
      * Includes some necessary assets
      *
@@ -35,6 +41,7 @@ class DefaultController extends \yii\web\Controller
         }
 
         $this->preparePage($this->getView());
+        $this->_container =  Yii::$app->controller->module->container;
 
         return true;
     }
@@ -83,7 +90,7 @@ class DefaultController extends \yii\web\Controller
             throw new NotAcceptableHttpException('Доступ к тесту невозможен после его завершения');
         }
         
-        $qModel = Quiz::getQuestionObjectById($session->getRealQuestionNumber($question));
+        $qModel = $this->_container->get('Question', [$session->getRealQuestionNumber($question)]);
         $testTitle = AR_QuizTest::findOne($session->getVar('currentTestId'))->name;
 
         if(Yii::$app->request->isPost) {
@@ -163,9 +170,7 @@ class DefaultController extends \yii\web\Controller
         $session = new TestSession();
         $session->markTestAsOver();
 
-        $questionList = AR_QuizQuestion::findAll(['test_id' => $session->getVar('currentTestId')]);
-
-        $quizModel = new Quiz($questionList, $session->getVar('questionIds'));
+        $quizModel = $this->_container->get('Quiz',[$session->getVar('currentTestId'), $session->getVar('questionIds')]);
         $quizModel->loadUserAnswers($session->getVar('answers'));
         $quizModel->checkAnswers();
 

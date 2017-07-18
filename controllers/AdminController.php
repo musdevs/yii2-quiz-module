@@ -19,6 +19,11 @@ class AdminController extends Controller
     const AJAX_SUCCESS = '{"result":"SUCCESS"}';
 
     /**
+     * @var \yii\di\Container
+     */
+    protected $_container;
+
+    /**
      * Includes some necessary assets
      *
      * @param $view
@@ -98,7 +103,7 @@ class AdminController extends Controller
         }
         
         if(Yii::$app->request->isPost) {
-            $result = Quiz::saveQuestionToDb(Yii::$app->request->post(), $test_id);
+            $result = Quiz::saveQuestionToDb(Yii::$app->request->post(), $test_id, $this->_container);
             
             if($result) {
                 return $this->refresh();
@@ -138,7 +143,7 @@ class AdminController extends Controller
         $test_id = $questionModel->test_id;
 
         if(Yii::$app->request->isPost) {
-            $result = Quiz::updateQuestionInDb(Yii::$app->request->post(), $question_id);
+            $result = Quiz::updateQuestionInDb(Yii::$app->request->post(), $question_id, $this->_container);
 
             if($result) {
                 return $this->refresh();

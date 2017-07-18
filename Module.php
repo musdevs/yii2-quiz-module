@@ -2,6 +2,9 @@
 
 namespace gypsyk\quiz;
 
+use gypsyk\quiz\models\AR_QuizQuestion;
+use Yii;
+
 /**
  * Quiz module class
  * 
@@ -26,12 +29,42 @@ class Module extends \yii\base\Module
     public $controllerNamespace = 'gypsyk\quiz\controllers';
 
     /**
+     * Yii2 dependency injection container
+     *
+     * @var
+     */
+    public $container;
+
+    /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
         $this->registerTranslations();
+        $this->container = new \yii\di\Container();
+
+        $this->container->set('Mapper', '\gypsyk\quiz\models\helpers\QuestionsTypeMapper');
+
+        //params - array: 0 - question id in database
+        $this->container->set('Question', function ($container, $params, $config) {
+            $questionModel = AR_QuizQuestion::findOne($params[0]);
+
+            if(empty($questionModel))
+                return null;
+
+            $qClass = $container->get('Mapper')->getQuestionClassByTypeName($questionModel->getTypeCode());
+
+            return Yii::createObject($qClass, [$questionModel]);
+        });
+
+        //params - array: 0 - test id from db,
+        $this->container->set('Quiz', function ($container, $params, $config) {
+            $questionList = AR_QuizQuestion::findAll(['test_id' => $params[0]]);
+
+            return Yii::createObject('gypsyk\quiz\models\Quiz', [$questionList, $params[1], $container]);
+        });
+
     }
 
     /**
